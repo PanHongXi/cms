@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="author" content="云琰 Team">
+    <meta name="copyright" content="云琰">
+    <title>配置列表 - 云琰</title>
+    <link href="/favicon.ico" rel="icon">
+    <link href="__ADMIN__/css/bootstrap_1.css" rel="stylesheet">
+    <link href="__ADMIN__/css/bootstrap.css" rel="stylesheet">
+    <link href="__ADMIN__/css/iconfont_1.css" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome_1.css" rel="stylesheet">
+    <link href="__ADMIN__/css/awesome-bootstrap-checkbox_1.css" rel="stylesheet">
+    <link href="__ADMIN__/css/bootstrap-select.css" rel="stylesheet">
+    <link href="__ADMIN__/css/bootstrap-fileinput.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base_1.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base_2.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base_3.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="__ADMIN__/js/html5shiv_1.js"></script>
+    <script src="__ADMIN__/js/respond_1.js"></script>
+    <![endif]-->
+    <script src="__ADMIN__/js/jquery_1.js"></script>
+    <script src="__ADMIN__/js/bootstrap_1.js"></script>
+    <script src="__ADMIN__/js/bootstrap-growl_1.js"></script>
+    <script src="__ADMIN__/js/bootbox.js"></script>
+    <script src="__ADMIN__/js/bootstrap-select.js"></script>
+    <script src="__ADMIN__/js/bootstrap-fileinput.js"></script>
+    <script src="__ADMIN__/js/jquery.nicescroll.js"></script>
+    <script src="__ADMIN__/js/jquery.validate_1.js"></script>
+    <script src="__ADMIN__/js/jquery.validate.additional_1.js"></script>
+    <script src="__ADMIN__/js/jquery.form_1.js"></script>
+    <script src="__ADMIN__/js/jquery.cookie_1.js"></script>
+    <script src="__ADMIN__/js/underscore_1.js"></script>
+    <script src="__ADMIN__/js/url_1.js"></script>
+    <script src="__ADMIN__/js/velocity.js"></script>
+    <script src="__ADMIN__/js/velocity.ui.js"></script>
+    <script src="__ADMIN__/js/intl-messageformat-with-locales.js"></script>
+    <script src="__ADMIN__/js/base_1.js"></script>
+    <script src="__ADMIN__/js/base.js"></script>
+    <script src="__ADMIN__/js/tip.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <style>
+        *
+        {
+            margin: 0;
+            padding: 0;
+        }
+        /*蓝色按钮,绝对定位*/
+        .blueButton
+        {
+            position: absolute;
+            display: block;
+            width: 100px;
+            height: 40px;
+            background-color: #00b3ee;
+            color: #fff;
+            text-decoration: none;
+            text-align: center;
+            font:normal normal normal 16px/40px 'Microsoft YaHei';
+            cursor: pointer;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .blueButton:hover
+        {
+            text-decoration: none;
+        }
+        /*自定义上传,位置大小都和a完全一样,而且完全透明*/
+        .myFileUpload
+        {
+            position: absolute;
+            display: block;
+            width: 100px;
+            height: 40px;
+            opacity: 0;
+        }
+        /*显示上传文件夹名的Div*/
+        .shows
+        {
+            position: absolute;
+            top:40px;
+            width: 100%;
+            height: 30px;
+            font:normal normal normal 14px/30px 'Microsoft YaHei';
+        }
+    </style>
+    <script>
+        $().ready(function() {
+
+            var $settingForm = $("#settingForm");
+            var $watermarkImage = $("#watermarkImage");
+            var $watermarkImageFile = $("#watermarkImageFile");
+            var $distributionCommissionRateModal = $("#distributionCommissionRateModal");
+            var $smtpHost = $("#smtpHost");
+            var $smtpPort = $("#smtpPort");
+            var $smtpUsername = $("#smtpUsername");
+            var $smtpPassword = $("#smtpPassword");
+            var $smtpSSLEnabled = $("#smtpSSLEnabled");
+            var $smtpFromMail = $("#smtpFromMail");
+            var $testSmtp = $("#testSmtp");
+            var $toMail = $("#toMail");
+            var $sendMail = $("#sendMail");
+            var $addDistributionCommissionRate = $("#addDistributionCommissionRate");
+            var $distributionCommissionRate = $("#distributionCommissionRate");
+            var $smsAppId = $("#smsAppId");
+            var $smsBalance = $("#smsBalance");
+            var distributionCommissionRateTableTemplate = _.template($("#distributionCommissionRateTableTemplate").html());
+            var initDistributionCommissionRates = [
+                "50",
+                "30",
+                "20"
+            ];
+
+            // 水印图片
+            $watermarkImageFile.fileinput({
+                allowedFileExtensions: "".split(","),
+                maxFileSize: 10 * 1024,
+                showUpload: false,
+                showClose: false,
+                initialPreview: ["\/upload/image/watermark.png"],
+                initialPreviewAsData: true,
+                initialPreviewShowDelete: false,
+                previewClass: "single-file-preview",
+                layoutTemplates: {
+                    footer: '<div class="file-thumbnail-footer">{actions}</div>',
+                    actions: '<div class="file-actions"><div class="file-footer-buttons">{upload} {download} {delete} {zoom} {other}</div>{drag}<div class="clearfix"></div></div>'
+                },
+                fileActionSettings: {
+                    showUpload: false,
+                    showRemove: false,
+                    showDrag: false
+                },
+                removeFromPreviewOnError: true
+            }).on("filecleared fileerror fileuploaderror", function() {
+                $watermarkImage.val("");
+            });
+
+            // 邮件测试
+            $testSmtp.click(function() {
+                $testSmtp.closest("div.form-group").velocity("slideUp");
+                $toMail.prop("disabled", false).closest("div.form-group").velocity("slideDown");
+            });
+
+            // 发送邮件
+            $sendMail.click(function() {
+                var $element = $(this);
+                var validator = $settingForm.validate();
+                var isValid = validator.element($smtpFromMail) & validator.element($smtpHost) & validator.element($smtpPort) & validator.element($smtpUsername) & validator.element($toMail);
+                var loading = false;
+
+                $.ajax({
+                    url: "/admin/setting/test_smtp",
+                    type: "POST",
+                    data: {
+                        smtpHost: $smtpHost.val(),
+                        smtpPort: $smtpPort.val(),
+                        smtpUsername: $smtpUsername.val(),
+                        smtpPassword: $smtpPassword.val(),
+                        smtpSSLEnabled: $smtpSSLEnabled.val(),
+                        smtpFromMail: $smtpFromMail.val(),
+                        toMail: $toMail.val()
+                    },
+                    dataType: "json",
+                    cache: false,
+                    beforeSend: function() {
+                        loading = true;
+                        if (!isValid) {
+                            return false;
+                        }
+                        setTimeout(function() {
+                            if (loading) {
+                                $element.button("loading");
+                            }
+                        }, 500);
+                    },
+                    success: function(data) {
+                        bootbox.alert(data.mesaage);
+                    },
+                    complete: function() {
+                        loading = false;
+                        $element.button("reset");
+                    }
+                });
+            });
+
+            // 短信余额查询
+            $smsBalance.click(function() {
+                var $element = $(this);
+                var loading = false;
+
+                $.ajax({
+                    url: "/admin/setting/sms_balance",
+                    type: "GET",
+                    dataType: "json",
+                    cache: false,
+                    beforeSend: function() {
+                        loading = true;
+                        setTimeout(function() {
+                            if (loading) {
+                                $element.button("loading");
+                            }
+                        }, 500);
+                    },
+                    success: function(data) {
+                        bootbox.alert(data.mesaage);
+                    },
+                    complete: function() {
+                        loading = false;
+                        $element.button("reset");
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+</head>
+<body class="admin">
+{include file="common/header"}
+<script>
+    $().ready(function() {
+
+        var $document = $(document);
+        var $mainHeaderLogout = $("#mainHeaderLogout");
+
+        // 用户注销
+        $mainHeaderLogout.click(function() {
+            $document.trigger("loggedOut.shopxx.user", $.getCurrentUser());
+        });
+
+    });
+</script>
+<script>
+    $().ready(function() {
+
+        var $window = $(window);
+        var $body = $("body");
+        var $mainSidebarCollapseToggle = $("[data-toggle='mainSidebarCollapse']");
+        var $mainSidebar = $("#mainSidebar");
+        var $searchForm = $("#mainSidebar .search form");
+        var $searchValue = $("#mainSidebar .search input[name='searchValue']");
+        var $panelCollapse = $("#mainSidebar .panel-collapse");
+
+        // 主侧边栏折叠
+        $mainSidebarCollapseToggle.click(function() {
+            var niceScroll = $mainSidebar.getNiceScroll();
+            var interval = setInterval(function() {
+                niceScroll.resize();
+            }, 10);
+
+            if ($window.width() > 767) {
+                $body.removeClass("main-sidebar-expanded").toggleClass("main-sidebar-mini");
+            } else {
+                $body.removeClass("main-sidebar-mini").toggleClass("main-sidebar-expanded");
+            }
+
+            $body.one("bsTransitionEnd", function() {
+                niceScroll.resize();
+                window.clearInterval(interval);
+            }).emulateTransitionEnd(500);
+        });
+
+        // 主侧边栏滚动条
+        $mainSidebar.niceScroll({
+            cursorwidth: "4px",
+            cursorcolor: "#ffffff",
+            cursorborder: "0px",
+            cursoropacitymax: 0.4
+        });
+
+        // 搜索
+        $searchForm.submit(function() {
+            if ($.trim($searchValue.val()) == "") {
+                return false;
+            }
+        });
+
+        // 面板折叠
+        $panelCollapse.on("shown.bs.collapse hidden.bs.collapse", function() {
+            $mainSidebar.getNiceScroll().resize();
+        });
+
+    });
+</script>
+{include file="common/left"}
+<main>
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <li>
+                <a href="{:url('Index/index')}">
+                    <i class="iconfont icon-homefill"></i>
+                    首页
+                </a>
+            </li>
+            <li class="active">系统设置</li>
+        </ol>
+        <form id="form" class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#base" data-toggle="tab">基本设置</a>
+                        </li>
+                        <li>
+                            <a href="#show" data-toggle="tab">联系方式设置</a>
+                        </li>
+                        <li>
+                            <a href="#other" data-toggle="tab">SEO设置</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <!--基本设置-->
+                        <div id="base" class="tab-pane active">
+                            <?php foreach($list as $k => $v): ?>
+                                <?php if($v['cf_type'] == 1): ?>
+
+                                    <!--文本框-->
+                                    <?php if($v['dt_type'] == 1): ?>
+                                        <div class="form-group">
+                                            <label class="col-xs-3 col-sm-2 control-label item-required" for="siteName"><?php echo $v['cname'];?></label>
+                                            <div class="col-xs-9 col-sm-4">
+                                                <input id="siteName" name="<?php echo $v['ename'];?>" class="form-control" type="text" value="<?php echo $v['value'];?>" maxlength="200">
+                                            </div>
+                                        </div>
+                                    <?php endif;?>
+
+                                    <!--单选框-->
+                                    <?php if($v['dt_type'] == 2): ?>
+
+                                        <?php if($v['valuess']):
+                                            $arr = explode(',', $v['valuess']);
+                                        ?>
+                                            <div class="form-group">
+                                                <label class="col-xs-3 col-sm-2 control-label" for="table_name"><?php echo $v['cname'];?>:</label>
+                                                <div class="col-xs-9 col-sm-4">
+                                                   <?php foreach($arr as $k1 => $v1):?>
+                                                        <label class="demo--label">
+                                                            <input class="demo--radio" style="cursor:pointer;" value="<?php echo $v1;?>" type="radio" {if condition="$v1 eq $v['value']"}checked="checked"{/if} name="<?php echo $v['ename'];?>">
+                                                            <span class="demo--radioInput"></span><?php echo $v1;?>
+                                                        </label>
+                                                    <?php endforeach;?>
+
+                                                </div>
+                                            </div>
+                                        <?php endif;?>
+                                    <?php endif;?>
+
+                                    <!--复选-->
+                                    <?php if($v['dt_type'] == 3): ?>
+                                        <div class="form-group">
+                                            <label class="col-xs-3 col-sm-2 control-label"><?php echo $v['cname'];?>:</label>
+                                            <div class="col-xs-9 col-sm-4">
+                                                <?php if($v['valuess']):
+                                                    $valuess = explode(',', $v['valuess']);
+                                                    $value = explode(',', $v['value']);
+                                                    foreach($valuess as $k1 => $v1):
+                                                ?>
+                                                    <div class="checkbox checkbox-inline">
+                                                        <input id="isRequired" name="<?php echo $v['ename'];?>[]" type="checkbox" value="<?php echo $v1;?>" <?php if(in_array($v1, $value)){echo 'checked="checked"';}?>>
+                                                        <label for="isRequired"><?php echo $v1; ?></label>
+                                                    </div>
+                                                <?php endforeach; endif;?>
+                                            </div>
+                                        </div>
+                                    <?php endif;?>
+
+                                    <!--下拉-->
+                                    <?php if($v['dt_type'] == 4): ?>
+                                        <div class="form-group">
+                                            <label class="col-xs-3 col-sm-2 control-label"><?php echo $v['cname'];?>:</label>
+                                            <div class="col-xs-9 col-sm-4">
+                                                <?php if($v['valuess']):
+                                                    $valuess = explode(',', $v['valuess']);
+                                                ?>
+                                                    <select name="<?php echo $v['ename'];?>" class="selectpicker form-control" data-size="10">
+                                                        <?php foreach($valuess as $k1 => $v1):?>
+                                                            <option value="<?php echo $v1; ?>" {if condition="$v['value'] eq $v1"}selected="selected"{/if}><?php echo $v1; ?></option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                <?php endif;?>
+                                            </div>
+                                        </div>
+                                    <?php endif;?>
+
+                                    <!--文本域-->
+                                    <?php if($v['dt_type'] == 5): ?>
+                                        <div class="form-group">
+                                            <label class="col-xs-3 col-sm-2 control-label" for="value"><?php echo $v['cname'];?>:</label>
+                                            <div class="col-xs-9 col-sm-4">
+                                                <textarea id="value" name="<?php echo $v['ename'];?>" class="form-control" rows="5"><?php echo $v['value'];?></textarea>
+                                            </div>
+                                        </div>
+                                    <?php endif;?>
+
+                                    <!--附件-->
+                                    <?php if($v['dt_type'] == 6): ?>
+                                        <div class="form-group" style="margin-bottom: 60px">
+
+                                            <label class="col-xs-3 col-sm-2 control-label item-required"><?php echo $v['cname'];?>:</label>
+                                            <div class="col-xs-9 col-sm-4">
+                                                <?php if($v['value']):?>
+                                                    <img style="width: 200px;height: 60px" src="__IMG__/<?php echo $v['value'];?>"/>
+                                                <?php endif;?>
+                                                <?php if(!$v['value']):?>
+                                                <img style="width: 200px;height: 60px" src="__ADMIN__/img/t.png"/>
+                                                <?php endif;?>
+                                                <!--<input name="<?php echo $v['ename'];?>" type="hidden" value="<?php echo $v['value'];?>" data-provide="fileinput" data-file-type="IMAGE">-->
+                                                <div>
+                                                    <a href='javascript:void(0);' class="blueButton">选择文件</a>
+                                                    <input name="<?php echo $v['ename'];?>" type="file" class="myFileUpload" /><div style="margin-left: 23%;margin-top: 5%" class="shows"></div>
+
+                                                    <!--<input class="btn btn-primary btn-file" id="1539960935646_93" name="<?php echo $v['ename'];?>" type="file" value="<?php echo $v['value'];?>" style="">-->
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    <?php endif;?>
+
+                                <?php endif;?>
+                            <?php endforeach;?>
+                        </div>
+
+                        <!--联系方式设置-->
+                        <div id="show" class="tab-pane">
+                            <?php foreach($list as $k => $v): ?>
+                            <?php if($v['cf_type'] == 2): ?>
+
+                            <!--文本框-->
+                            <?php if($v['dt_type'] == 1): ?>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label item-required" for="siteName"><?php echo $v['cname'];?></label>
+                                <div class="col-xs-9 col-sm-4">
+                                    <input id="siteName" name="<?php echo $v['ename'];?>" class="form-control" type="text" value="<?php echo $v['value'];?>" maxlength="200">
+                                </div>
+                            </div>
+                            <?php endif;?>
+
+                            <!--单选框-->
+                            <?php if($v['dt_type'] == 2): ?>
+
+                            <?php if($v['valuess']):
+                                            $arr = explode(',', $v['valuess']);
+                                        ?>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label" for="table_name"><?php echo $v['cname'];?>:</label>
+                                <div class="col-xs-9 col-sm-4">
+                                    <?php foreach($arr as $k1 => $v1):?>
+                                    <label class="demo--label">
+                                        <input class="demo--radio" style="cursor:pointer;" value="<?php echo $v1;?>" type="radio" {if condition="$v1 eq $v['value']"}checked="checked"{/if} name="<?php echo $v['ename'];?>">
+                                        <span class="demo--radioInput"></span><?php echo $v1;?>
+                                    </label>
+                                    <?php endforeach;?>
+
+                                </div>
+                            </div>
+                            <?php endif;?>
+                            <?php endif;?>
+
+                            <!--复选-->
+                            <?php if($v['dt_type'] == 3): ?>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label"><?php echo $v['cname'];?>:</label>
+                                <div class="col-xs-9 col-sm-4">
+                                    <?php if($v['valuess']):
+                                                    $valuess = explode(',', $v['valuess']);
+                                                    $value = explode(',', $v['value']);
+                                                    foreach($valuess as $k1 => $v1):
+                                    ?>
+                                    <div class="checkbox checkbox-inline">
+                                        <input id="isRequired" name="<?php echo $v['ename'];?>[]" type="checkbox" value="<?php echo $v1;?>" <?php if(in_array($v1, $value)){echo 'checked="checked"';}?>>
+                                        <label for="isRequired"><?php echo $v1; ?></label>
+                                    </div>
+                                    <?php endforeach; endif;?>
+                                </div>
+                            </div>
+                            <?php endif;?>
+
+                            <!--下拉-->
+                            <?php if($v['dt_type'] == 4): ?>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label"><?php echo $v['cname'];?>:</label>
+                                <div class="col-xs-9 col-sm-4">
+                                    <?php if($v['valuess']):
+                                                    $valuess = explode(',', $v['valuess']);
+                                                ?>
+                                    <select name="<?php echo $v['ename'];?>" class="selectpicker form-control" data-size="10">
+                                        <?php foreach($valuess as $k1 => $v1):?>
+                                        <option value="<?php echo $v1;?>" {if condition="$v['value'] eq $v1"}selected="selected"{/if}><?php echo $v1; ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <?php endif;?>
+                                </div>
+                            </div>
+                            <?php endif;?>
+
+                            <!--文本域-->
+                            <?php if($v['dt_type'] == 5): ?>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label" for="value"><?php echo $v['cname'];?>:</label>
+                                <div class="col-xs-9 col-sm-4">
+                                    <textarea id="value" name="<?php echo $v['ename'];?>" class="form-control" rows="5"><?php echo $v['value'];?></textarea>
+                                </div>
+                            </div>
+                            <?php endif;?>
+
+                            <!--附件-->
+                            <?php if($v['dt_type'] == 6): ?>
+                            <div class="form-group" style="margin-bottom: 60px">
+
+                                <label class="col-xs-3 col-sm-2 control-label item-required"><?php echo $v['cname'];?>:</label>
+                                <div class="col-xs-9 col-sm-4">
+                                    <?php if($v['value']):?>
+                                    <img style="width: 200px;height: 60px" src="__IMG__/<?php echo $v['value'];?>"/>
+                                    <?php endif;?>
+                                    <?php if(!$v['value']):?>
+                                    <img style="width: 200px;height: 60px" src="__ADMIN__/img/t.png"/>
+                                    <?php endif;?>
+                                    <!--<input name="<?php echo $v['ename'];?>" type="hidden" value="<?php echo $v['value'];?>" data-provide="fileinput" data-file-type="IMAGE">-->
+                                    <div>
+                                        <a href='javascript:void(0);' class="blueButton">选择文件</a>
+                                        <input name="<?php echo $v['ename'];?>" type="file" class="myFileUpload" /><div style="margin-left: 23%;margin-top: 5%" class="shows"></div>
+
+                                        <!--<input class="btn btn-primary btn-file" id="1539960935646_93" name="<?php echo $v['ename'];?>" type="file" value="<?php echo $v['value'];?>" style="">-->
+                                    </div>
+
+                                </div>
+                            </div>
+                            <?php endif;?>
+
+                            <?php endif;?>
+                            <?php endforeach;?>
+                        </div>
+
+                        <!--SEO设置-->
+                        <div id="other" class="tab-pane">
+                            <?php foreach($list as $k => $v): ?>
+                            <?php if($v['cf_type'] == 3): ?>
+
+                            <!--文本框-->
+                            <?php if($v['dt_type'] == 1): ?>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label item-required" for="siteName"><?php echo $v['cname'];?></label>
+                                <div class="col-xs-9 col-sm-4">
+                                    <input id="siteName" name="<?php echo $v['ename'];?>" class="form-control" type="text" value="<?php echo $v['value'];?>" maxlength="200">
+                                </div>
+                            </div>
+                            <?php endif;?>
+
+                            <!--单选框-->
+                            <?php if($v['dt_type'] == 2): ?>
+
+                            <?php if($v['valuess']):
+                                            $arr = explode(',', $v['valuess']);
+                                        ?>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label" for="table_name"><?php echo $v['cname'];?>:</label>
+                                <div class="col-xs-9 col-sm-4">
+                                    <?php foreach($arr as $k1 => $v1):?>
+                                    <label class="demo--label">
+                                        <input class="demo--radio" style="cursor:pointer;" value="<?php echo $v1;?>" type="radio" {if condition="$v1 eq $v['value']"}checked="checked"{/if} name="<?php echo $v['ename'];?>">
+                                        <span class="demo--radioInput"></span><?php echo $v1;?>
+                                    </label>
+                                    <?php endforeach;?>
+
+                                </div>
+                            </div>
+                            <?php endif;?>
+                            <?php endif;?>
+
+                            <!--复选-->
+                            <?php if($v['dt_type'] == 3): ?>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label"><?php echo $v['cname'];?>:</label>
+                                <div class="col-xs-9 col-sm-4">
+                                    <?php if($v['valuess']):
+                                                    $valuess = explode(',', $v['valuess']);
+                                                    $value = explode(',', $v['value']);
+                                                    foreach($valuess as $k1 => $v1):
+                                    ?>
+                                    <div class="checkbox checkbox-inline">
+                                        <input id="isRequired" name="<?php echo $v['ename'];?>[]" type="checkbox" value="<?php echo $v1;?>" <?php if(in_array($v1, $value)){echo 'checked="checked"';}?>>
+                                        <label for="isRequired"><?php echo $v1; ?></label>
+                                    </div>
+                                    <?php endforeach; endif;?>
+                                </div>
+                            </div>
+                            <?php endif;?>
+
+                            <!--下拉-->
+                            <?php if($v['dt_type'] == 4): ?>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label"><?php echo $v['cname'];?>:</label>
+                                <div class="col-xs-9 col-sm-4">
+                                    <?php if($v['valuess']):
+                                                    $valuess = explode(',', $v['valuess']);
+                                                ?>
+                                    <select name="<?php echo $v['ename'];?>" class="selectpicker form-control" data-size="10">
+                                        <?php foreach($valuess as $k1 => $v1):?>
+                                        <option value="<?php echo $v1;?>" {if condition="$v['value'] eq $v1"}selected="selected"{/if}><?php echo $v1; ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <?php endif;?>
+                                </div>
+                            </div>
+                            <?php endif;?>
+
+                            <!--文本域-->
+                            <?php if($v['dt_type'] == 5): ?>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label" for="value"><?php echo $v['cname'];?>:</label>
+                                <div class="col-xs-9 col-sm-4">
+                                    <textarea id="value" name="<?php echo $v['ename'];?>" class="form-control" rows="5"><?php echo $v['value'];?></textarea>
+                                </div>
+                            </div>
+                            <?php endif;?>
+
+                            <!--附件-->
+                            <?php if($v['dt_type'] == 6): ?>
+                            <div class="form-group" style="margin-bottom: 60px">
+
+                                <label class="col-xs-3 col-sm-2 control-label item-required"><?php echo $v['cname'];?>:</label>
+                                <div class="col-xs-9 col-sm-4">
+                                    <?php if($v['value']):?>
+                                    <img style="width: 200px;height: 60px" src="__IMG__/<?php echo $v['value'];?>"/>
+                                    <?php endif;?>
+                                    <?php if(!$v['value']):?>
+                                    <img style="width: 200px;height: 60px" src="__ADMIN__/img/t.png"/>
+                                    <?php endif;?>
+                                    <!--<input name="<?php echo $v['ename'];?>" type="hidden" value="<?php echo $v['value'];?>" data-provide="fileinput" data-file-type="IMAGE">-->
+                                    <div>
+                                        <a href='javascript:void(0);' class="blueButton">选择文件</a>
+                                        <input name="<?php echo $v['ename'];?>" type="file" class="myFileUpload" /><div style="margin-left: 23%;margin-top: 5%" class="shows"></div>
+
+                                        <!--<input class="btn btn-primary btn-file" id="1539960935646_93" name="<?php echo $v['ename'];?>" type="file" value="<?php echo $v['value'];?>" style="">-->
+                                    </div>
+
+                                </div>
+                            </div>
+                            <?php endif;?>
+
+                            <?php endif;?>
+                            <?php endforeach;?>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-xs-9 col-sm-10 col-xs-offset-3 col-sm-offset-2">
+                            <span class="btn btn-primary" id="tijiao" onclick="prot();" >确 定</span>
+                            <!--<button class="btn btn-primary" type="submit" id="tijiao" onclick="prot();">确 定</button>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>
+<script>
+    $(document).ready(function()
+    {
+        $(".myFileUpload").change(function()
+        {
+            var arrs=$(this).val().split('\\');
+            var filename=arrs[arrs.length-1];
+            $(".shows").html(filename);
+        });
+    });
+</script>
+<script>
+    function prot(){
+        var form = new FormData(document.getElementById("form"));
+        $.ajax({
+            url:"{:url('admin/Conf/confList')}",
+            type:"POST",
+            data:form,
+            processData:false,
+            contentType:false,
+            success:function(data){
+                var t = JSON.parse(data);
+
+                if (t.status == 1) {
+                    tip(t.msg, t.status, t.url);
+                } else {
+                    tip(t.msg, t.status, '');
+                }
+            },
+            error:function () {
+                tip(data.msg, 2);
+            }
+        });
+    }
+</script>

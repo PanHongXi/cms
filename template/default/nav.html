@@ -1,0 +1,56 @@
+<div class="touch-toggle-content touch-top-home">
+<div class="drawer-section drawer-section-language">
+<ul class="touch-language clearfix" skinobjectzone="HtmlLanguage_2924">
+<li><a href="/en/">English</a></li>
+<li><a href="/">中文简体</a></li>
+</ul>
+</div>
+<div class="drawer-section drawer-section-menu">
+<div class="touch-menu" skinobjectzone="menu_3142">
+<ul>
+<li><a href="/"><span>网站首页</span></a></li>
+
+  <li><a href="javascript:;"><span></span><i class="touch-arrow-down"></i></a>
+  <ul>
+  <li><a href="/a/guanyuwomen/gongsijianjie/"><span>公司简介</span></a></li>
+  <li><a href="/a/guanyuwomen/shengchanjidi/"><span>生产基地</span></a></li>
+  <li><a href="/a/guanyuwomen/zizhirongyu/"><span>资质荣誉</span></a></li>
+  </ul>
+
+
+</ul>
+</div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+     
+     $(".touch-toggle a").click(function(event){
+      var className = $(this).attr("data-drawer");
+      
+      if( $("."+className).css('display') == 'none' ){      
+       $("."+className).slideDown().siblings(".drawer-section").slideUp();
+      }else{
+       $(".drawer-section").slideUp(); 
+      }
+      event.stopPropagation();
+     });
+     
+     /*$(document).click(function(){
+      $(".drawer-section").slideUp();     
+     })*/
+     
+     $('.touch-menu a').click(function(){     
+      if( $(this).next().is('ul') ){
+       if( $(this).next('ul').css('display') == 'none' ){
+        $(this).next('ul').slideDown();
+        $(this).find('i').attr("class","touch-arrow-up");     
+       }else{
+        $(this).next('ul').slideUp();
+        $(this).next('ul').find('ul').slideUp();
+        $(this).find('i').attr("class","touch-arrow-down");
+       }   
+      }
+     });
+    });
+</script>
+</div>

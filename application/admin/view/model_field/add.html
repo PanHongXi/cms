@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="author" content="SHOP++ Team">
+    <meta name="copyright" content="SHOP++">
+    <title>添加添加 - 云琰</title>
+    <link href="/favicon.ico" rel="icon">
+    <link href="__ADMIN__/css/bootstrap.css" rel="stylesheet">
+    <link href="__ADMIN__/css/iconfont.css" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome.css" rel="stylesheet">
+    <link href="__ADMIN__/css/bootstrap-select.css" rel="stylesheet">
+    <link href="__ADMIN__/css/awesome-bootstrap-checkbox.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base_3.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="__ADMIN__/js/html5shiv.js"></script>
+    <script src="__ADMIN__/js/respond.js"></script>
+    <![endif]-->
+    <script src="__ADMIN__/js/jquery.js"></script>
+    <script src="__ADMIN__/js/bootstrap.js"></script>
+    <script src="__ADMIN__/js/bootstrap-growl.js"></script>
+    <script src="__ADMIN__/js/bootstrap-select.js"></script>
+    <script src="__ADMIN__/js/jquery.nicescroll.js"></script>
+    <script src="__ADMIN__/js/jquery.validate.js"></script>
+    <script src="__ADMIN__/js/jquery.validate.additional.js"></script>
+    <script src="__ADMIN__/js/jquery.form.js"></script>
+    <script src="__ADMIN__/js/jquery.cookie.js"></script>
+    <script src="__ADMIN__/js/underscore.js"></script>
+    <script src="__ADMIN__/js/url.js"></script>
+    <script src="__ADMIN__/js/velocity.js"></script>
+    <script src="__ADMIN__/js/velocity.ui.js"></script>
+    <script src="__ADMIN__/js/base.js"></script>
+    <script src="__ADMIN__/js/base_1.js"></script>
+    <script>
+        $().ready(function() {
+
+            var $businessAttributeForm = $("#businessAttributeForm");
+            var $type = $("#type");
+            var $pattern = $("#pattern");
+            var $addOption = $("#addOption");
+            var $option = $("#option");
+            var optionTemplate = _.template($("#optionTemplate").html());
+
+            // 类型
+            $type.change(function() {
+                var value = $(this).val();
+                var currentOptions = getCurrentOptions().length > 0 ? getCurrentOptions() : [""];
+
+                buildOption(currentOptions);
+                if (value == "SELECT" || value == "CHECKBOX") {
+                    if ($pattern.is(":visible")) {
+                        $pattern.prop("disabled", true).closest(".form-group").velocity("slideUp");
+                        $option.velocity("slideDown");
+                        $addOption.closest(".form-group").velocity("slideDown");
+                    }
+                } else {
+                    if ($pattern.is(":hidden")) {
+                        $pattern.prop("disabled", false).closest(".form-group").velocity("slideDown");
+                        $option.velocity("slideUp");
+                        $addOption.closest(".form-group").velocity("slideUp");
+                    }
+                }
+            });
+
+            // 生成可选项
+            function buildOption(options) {
+                $option.html(optionTemplate({
+                    options: options
+                }));
+            }
+
+            // 获取当前可选项
+            function getCurrentOptions() {
+                return $option.find("input.options").map(function() {
+                    return $(this).val();
+                }).get();
+            }
+
+            // 增加可选项
+            $addOption.click(function() {
+                var options = getCurrentOptions();
+
+                options.push("");
+                buildOption(options);
+            });
+
+            // 移除可选项
+            $option.on("click", "button.remove", function() {
+                var $element = $(this);
+
+                $element.closest(".form-group").velocity("slideUp", {
+                    complete: function() {
+                        $(this).remove();
+
+                        buildOption(getCurrentOptions());
+                    }
+                });
+            });
+
+            $.validator.addClassRules({
+                options: {
+                    required: true
+                }
+            });
+
+            // 表单验证
+            $businessAttributeForm.validate({
+                rules: {
+                    name: "required",
+                    pattern: {
+                        remote: {
+                            url: "/admin/business_attribute/check_pattern",
+                            cache: false
+                        }
+                    },
+                    order: "digits"
+                },
+                messages: {
+                    pattern: {
+                        remote: "语法错误"
+                    }
+                }
+            });
+
+        });
+    </script>
+</head>
+<body class="admin">
+{include file="common/header"}
+<script>
+    $().ready(function() {
+
+        var $document = $(document);
+        var $mainHeaderLogout = $("#mainHeaderLogout");
+
+        // 用户注销
+        $mainHeaderLogout.click(function() {
+            $document.trigger("loggedOut.shopxx.user", $.getCurrentUser());
+        });
+
+    });
+</script>
+<script>
+    $().ready(function() {
+
+        var $window = $(window);
+        var $body = $("body");
+        var $mainSidebarCollapseToggle = $("[data-toggle='mainSidebarCollapse']");
+        var $mainSidebar = $("#mainSidebar");
+        var $searchForm = $("#mainSidebar .search form");
+        var $searchValue = $("#mainSidebar .search input[name='searchValue']");
+        var $panelCollapse = $("#mainSidebar .panel-collapse");
+
+        // 主侧边栏折叠
+        $mainSidebarCollapseToggle.click(function() {
+            var niceScroll = $mainSidebar.getNiceScroll();
+            var interval = setInterval(function() {
+                niceScroll.resize();
+            }, 10);
+
+            if ($window.width() > 767) {
+                $body.removeClass("main-sidebar-expanded").toggleClass("main-sidebar-mini");
+            } else {
+                $body.removeClass("main-sidebar-mini").toggleClass("main-sidebar-expanded");
+            }
+
+            $body.one("bsTransitionEnd", function() {
+                niceScroll.resize();
+                window.clearInterval(interval);
+            }).emulateTransitionEnd(500);
+        });
+
+        // 主侧边栏滚动条
+        $mainSidebar.niceScroll({
+            cursorwidth: "4px",
+            cursorcolor: "#ffffff",
+            cursorborder: "0px",
+            cursoropacitymax: 0.4
+        });
+
+        // 搜索
+        $searchForm.submit(function() {
+            if ($.trim($searchValue.val()) == "") {
+                return false;
+            }
+        });
+
+        // 面板折叠
+        $panelCollapse.on("shown.bs.collapse hidden.bs.collapse", function() {
+            $mainSidebar.getNiceScroll().resize();
+        });
+
+    });
+</script>
+{include file="common/left"}
+
+<main>
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <li>
+                <a href="/admin/index">
+                    <i class="iconfont icon-homefill"></i>
+                    首页
+                </a>
+            </li>
+            <li class="active">添加字段</li>
+        </ol>
+        <form id="form" class="ajax-form form-horizontal" action="" method="post">
+            <div class="panel panel-default">
+                <div class="panel-heading">添加字段</div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label item-required" for="model_name">中文名称:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <input id="model_name" name="field_cname" class="form-control" type="text" maxlength="200">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label" for="table_name">英文名称:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <input id="table_name" name="field_ename" class="form-control" type="text" maxlength="9">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label">所属模型:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <select name="model_id" class="selectpicker form-control" data-size="10">
+                                {volist name="modelList" id="modelList"}
+                                    <option value="{$modelList['id']}">{$modelList['model_name']}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label">字段类型:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <select name="field_type" class="selectpicker form-control" data-size="10">
+                                <option value="1">文本输入框</option>
+                                <option value="2">单选</option>
+                                <option value="3">复选</option>
+                                <option value="4">下拉菜单</option>
+                                <option value="5">文本域</option>
+                                <option value="6">附件类型</option>
+                                <option value="7">浮点</option>
+                                <option value="8">整型</option>
+                                <option value="9">长文本</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label item-required" >可选值:</label>
+                        <div class="col-xs-9 col-sm-4" title="不同的选项用英文的“,”分割" data-toggle="tooltip">
+                            <textarea class="form-control" style="height: 150px" name="field_values"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-xs-9 col-sm-10 col-xs-offset-3 col-sm-offset-2">
+                            <span class="btn btn-primary" id="tijiao" onclick="prot();" >确 定</span>
+                            <button class="btn btn-default" type="button" data-action="back">返 回</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>
+<script src="__ADMIN__/js/tip.js"></script>
+<script>
+    function prot(){
+        var form = new FormData(document.getElementById("form"));
+        $.ajax({
+            url:"{:url('admin/ModelField/add')}",
+            type:"POST",
+            data:form,
+            processData:false,
+            contentType:false,
+            success:function(data){
+                var t = JSON.parse(data);
+
+                if (t.status == 1) {
+                    tip(t.msg, t.status, t.url);
+                } else {
+                    tip(t.msg, t.status, '');
+                }
+            },
+            error:function () {
+                tip(data.msg, 2);
+            }
+        });
+    }
+</script>

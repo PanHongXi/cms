@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="author" content="SHOP++ Team">
+    <meta name="copyright" content="SHOP++">
+    <title>修改文章 - 云琰</title>
+    <link href="/favicon.ico" rel="icon">
+    <link href="__ADMIN__/css/bootstrap.css" rel="stylesheet">
+    <link href="__ADMIN__/css/iconfont.css" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome.css" rel="stylesheet">
+    <link href="__ADMIN__/css/bootstrap-select.css" rel="stylesheet">
+    <link href="__ADMIN__/css/awesome-bootstrap-checkbox.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base_3.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="__ADMIN__/plus/webuploader/webuploader.css">
+    <link rel="stylesheet" type="text/css" href="__ADMIN__/plus/webuploader/demo.css">
+    <!--[if lt IE 9]>
+    <script src="__ADMIN__/js/html5shiv.js"></script>
+    <script src="__ADMIN__/js/respond.js"></script>
+    <![endif]-->
+    <script src="__ADMIN__/js/jquery.js"></script>
+    <script src="__ADMIN__/js/bootstrap.js"></script>
+    <script src="__ADMIN__/js/bootstrap-growl.js"></script>
+    <script src="__ADMIN__/js/bootstrap-select.js"></script>
+    <script src="__ADMIN__/js/jquery.nicescroll.js"></script>
+    <script src="__ADMIN__/js/jquery.validate.js"></script>
+    <script src="__ADMIN__/js/jquery.validate.additional.js"></script>
+    <script src="__ADMIN__/js/jquery.form.js"></script>
+    <script src="__ADMIN__/js/jquery.cookie.js"></script>
+    <script src="__ADMIN__/js/underscore.js"></script>
+    <script src="__ADMIN__/js/url.js"></script>
+    <script src="__ADMIN__/js/velocity.js"></script>
+    <script src="__ADMIN__/js/velocity.ui.js"></script>
+    <script src="__ADMIN__/js/base.js"></script>
+    <script src="__ADMIN__/js/base_1.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="__ADMIN__/plus/layer/layer.js"></script>
+    <script src="__ADMIN__/plus/webuploader/webuploader.js"></script>
+
+    <script src="__ADMIN__/plus/ueditor/ueditor.config.js"></script>
+    <script src="__ADMIN__/plus/ueditor/ueditor.all.min.js"></script>
+    <script src="__ADMIN__/plus/ueditor/lang/zh-cn/zh-cn.js"></script>
+    <script>
+        var url = "{:url('Article/upload')}";
+        var swf = "__ADMIN__/plus/webuploader/";
+
+        $().ready(function() {
+
+            var $businessAttributeForm = $("#businessAttributeForm");
+            var $type = $("#type");
+            var $pattern = $("#pattern");
+            var $addOption = $("#addOption");
+            var $option = $("#option");
+
+            // 类型
+            $type.change(function() {
+                var value = $(this).val();
+                var currentOptions = getCurrentOptions().length > 0 ? getCurrentOptions() : [""];
+
+                buildOption(currentOptions);
+                if (value == "SELECT" || value == "CHECKBOX") {
+                    if ($pattern.is(":visible")) {
+                        $pattern.prop("disabled", true).closest(".form-group").velocity("slideUp");
+                        $option.velocity("slideDown");
+                        $addOption.closest(".form-group").velocity("slideDown");
+                    }
+                } else {
+                    if ($pattern.is(":hidden")) {
+                        $pattern.prop("disabled", false).closest(".form-group").velocity("slideDown");
+                        $option.velocity("slideUp");
+                        $addOption.closest(".form-group").velocity("slideUp");
+                    }
+                }
+            });
+
+            // 生成可选项
+            function buildOption(options) {
+                $option.html(optionTemplate({
+                    options: options
+                }));
+            }
+
+            // 获取当前可选项
+            function getCurrentOptions() {
+                return $option.find("input.options").map(function() {
+                    return $(this).val();
+                }).get();
+            }
+
+            // 增加可选项
+            $addOption.click(function() {
+                var options = getCurrentOptions();
+
+                options.push("");
+                buildOption(options);
+            });
+
+            // 移除可选项
+            $option.on("click", "button.remove", function() {
+                var $element = $(this);
+
+                $element.closest(".form-group").velocity("slideUp", {
+                    complete: function() {
+                        $(this).remove();
+
+                        buildOption(getCurrentOptions());
+                    }
+                });
+            });
+
+            $.validator.addClassRules({
+                options: {
+                    required: true
+                }
+            });
+
+            // 表单验证
+            $businessAttributeForm.validate({
+                rules: {
+                    name: "required",
+                    pattern: {
+                        remote: {
+                            url: "/admin/business_attribute/check_pattern",
+                            cache: false
+                        }
+                    },
+                    order: "digits"
+                },
+                messages: {
+                    pattern: {
+                        remote: "语法错误"
+                    }
+                }
+            });
+
+        });
+    </script>
+    <script src="__ADMIN__/plus/webuploader/demo.js"></script>
+</head>
+<body class="admin">
+{include file="common/header"}
+<script>
+    $().ready(function() {
+
+        var $document = $(document);
+        var $mainHeaderLogout = $("#mainHeaderLogout");
+
+        // 用户注销
+        $mainHeaderLogout.click(function() {
+            $document.trigger("loggedOut.shopxx.user", $.getCurrentUser());
+        });
+
+    });
+</script>
+<script>
+    $().ready(function() {
+
+        var $window = $(window);
+        var $body = $("body");
+        var $mainSidebarCollapseToggle = $("[data-toggle='mainSidebarCollapse']");
+        var $mainSidebar = $("#mainSidebar");
+        var $searchForm = $("#mainSidebar .search form");
+        var $searchValue = $("#mainSidebar .search input[name='searchValue']");
+        var $panelCollapse = $("#mainSidebar .panel-collapse");
+
+        // 主侧边栏折叠
+        $mainSidebarCollapseToggle.click(function() {
+            var niceScroll = $mainSidebar.getNiceScroll();
+            var interval = setInterval(function() {
+                niceScroll.resize();
+            }, 10);
+
+            if ($window.width() > 767) {
+                $body.removeClass("main-sidebar-expanded").toggleClass("main-sidebar-mini");
+            } else {
+                $body.removeClass("main-sidebar-mini").toggleClass("main-sidebar-expanded");
+            }
+
+            $body.one("bsTransitionEnd", function() {
+                niceScroll.resize();
+                window.clearInterval(interval);
+            }).emulateTransitionEnd(500);
+        });
+
+        // 主侧边栏滚动条
+        $mainSidebar.niceScroll({
+            cursorwidth: "4px",
+            cursorcolor: "#ffffff",
+            cursorborder: "0px",
+            cursoropacitymax: 0.4
+        });
+
+        // 搜索
+        $searchForm.submit(function() {
+            if ($.trim($searchValue.val()) == "") {
+                return false;
+            }
+        });
+
+        // 面板折叠
+        $panelCollapse.on("shown.bs.collapse hidden.bs.collapse", function() {
+            $mainSidebar.getNiceScroll().resize();
+        });
+
+    });
+</script>
+{include file="common/left"}
+
+<main>
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <li>
+                <a href="/admin/index">
+                    <i class="iconfont icon-homefill"></i>
+                    首页
+                </a>
+            </li>
+            <li class="active">添加文章</li>
+        </ol>
+        <form id="form" class="ajax-form form-horizontal" action="" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="id" value="{$artList['id']}"/>
+            <div class="panel panel-default">
+                <div class="panel-heading">添加文章</div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label item-required" for="model_name">文章标题:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <input id="model_name" name="title" value="{$artList['title']}" class="form-control" type="text" maxlength="200">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label" for="table_name">作者:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <input id="table_name" name="author" value="{$artList['author']}" class="form-control" type="text" maxlength="9">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label" for="table_name">来源:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <input id="source" name="source" value="{$artList['source']}" class="form-control" type="text" maxlength="9">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label" for="table_name">关键词:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <input id="keywords" name="keywords" value="{$artList['keywords']}" class="form-control" type="text" maxlength="9">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label">属性:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <?php $attr = explode(',', $artList['attr']);?>
+                            <div class="checkbox checkbox-inline">
+                                <input id="isRequired" name="attr[]" type="checkbox" value="图片" <?php if(in_array('图片', $attr)){echo 'checked="checked"';}?>>
+                                <label for="isRequired">图片</label>
+                            </div>
+                            <div class="checkbox checkbox-inline">
+                                <input id="isRequired" name="attr[]" type="checkbox" value="幻灯" <?php if(in_array('幻灯', $attr)){echo 'checked="checked"';}?>>
+                                <label for="isRequired">幻灯</label>
+                            </div>
+                            <div class="checkbox checkbox-inline">
+                                <input id="isRequired" name="attr[]" type="checkbox" value="头条" <?php if(in_array('头条', $attr)){echo 'checked="checked"';}?>>
+                                <label for="isRequired">头条</label>
+                            </div>
+                            <div class="checkbox checkbox-inline">
+                                <input id="isRequired" name="attr[]" type="checkbox" value="推荐" <?php if(in_array('推荐', $attr)){echo 'checked="checked"';}?>>
+                                <label for="isRequired">推荐</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label">上传图片:</label>
+                        <!--dom结构部分-->
+                        <div class="col-xs-9 col-sm-4">
+                            <div id="uploader" class="wu-example">
+                            <div class="queueList">
+                                <div id="dndArea" class="placeholder">
+                                    <div id="filePicker" class="webuploader-container" style="margin-top: 30px;font-size: 14px">
+                                        <div class="webuploader-pick" >点击选择图片</div>
+                                        <div id="rt_rt_1cv0fgqqgoa5pcpl0319ir18lt1" style="position: absolute; top: 0px; left: 448px; width: 138px; height: 24px; overflow: hidden; bottom: auto; right: auto;">
+                                            <input type="file"  name="file" class="webuploader-element-invisible" multiple="multiple" accept="image/*">
+                                            <label style="opacity: 0; width: 100%; height: 100%; display: block; cursor: pointer; background: rgb(255, 255, 255);margin-top: 100px"></label>
+                                        </div>
+                                    </div>
+                                    <p style="font-size: 14px;margin-bottom: 10px">或将照片拖到这里，单次最多可选30张</p>
+                                </div>
+                                <ul class="filelist"></ul>
+                                    {if condition="$artList['litpic'] neq ''"}
+                                        <ul class="filelist">
+                                            <li id="WU_FILE_{$artList['id']}0">
+                                                <!--<p class="title">6ef88c3e282dc473acc64a72ff1b40ee.png</p>-->
+                                                <p class="imgWrap">
+                                                    <img src="__IMG__/{$artList['litpic']}">
+                                                </p>
+                                                <p class="progress">
+                                                    <span></span>
+                                                </p>
+                                                <div class="file-panel" style="height: 0px;">
+                                                    <span class="cancel">删除</span>
+                                                    <span class="rotateRight">向右旋转</span>
+                                                    <span class="rotateLeft">向左旋转</span>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    {/if}
+                            </div>
+                            <div class="statusBar" style="display:none;">
+                                <div class="progress" style="display: none;">
+                                    <span class="text">0%</span>
+                                    <span class="percentage" style="width: 0%;"></span>
+                                </div><div class="info">共0张（0B），已上传0张</div>
+                                <div class="btns">
+                                    <div id="filePicker2" class="webuploader-container">
+                                        <div class="webuploader-pick">继续添加</div>
+                                        <div id="rt_rt_1cv0fgqqj14qe1tat1m961i928nf6" style="position: absolute; top: 0px; left: 0px; width: 1px; height: 1px; overflow: hidden;">
+                                            <input type="file" name="file" class="webuploader-element-invisible" multiple="multiple" accept="image/*">
+                                            <label style="opacity: 0; width: 100%; height: 100%; display: block; cursor: pointer; background: rgb(255, 255, 255);"></label>
+                                        </div>
+                                    </div>
+                                    <div class="uploadBtn state-pedding">开始上传</div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label">所属模型:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <select name="model_id" class="selectpicker form-control" data-size="10">
+                                {volist name="modelList" id="modelList"}
+                                    <option value="{$modelList['id']}" {if condition="$modelList['id'] eq $modelId"}selected="selected"{/if}>{$modelList['model_name']}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="col-xs-3 col-sm-2 control-label" for="table_name">所属栏目:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <input id="" value="{$cate['cate_name']}" disabled="disabled" class="form-control" type="text" maxlength="9">
+                            <input value="{$cate['id']}" name="cate_id"  class="form-control" type="hidden" maxlength="9">
+                        </div>
+                    </div>
+                    <!--自定义模型字段-->
+                    <?php foreach($diyField as $k => $v):?>
+                        <div class="form-group">
+                            <label class="col-xs-3 col-sm-2 control-label" for="table_name"><?php echo $v['field_cname'];?>:</label>
+                            <div class="col-xs-9 col-sm-4">
+                                <?php
+
+                                    switch ($v['field_type']) {
+                                        case 1:
+                                            echo "<input id='click' value='".$diyValues[$v["field_ename"]]."' name='".$v["field_ename"]."' class='form-control' type='text'>";
+                                            break;
+                                        case 2:
+                                            if($v['field_values']){
+                                                $arr = explode(',', $v['field_values']);
+                                                foreach($arr as $k1 => $v1){
+                                                    if($diyValues[$v["field_ename"]] == $v1){
+                                                        $checked = 'checked=checked';
+                                                    } else {
+                                                        $checked ='';
+                                                    }
+                                                    echo "<label class='demo--label'>
+                                                            <input class='demo--radio' style='cursor:pointer;' value='$v1' type='radio'  $checked name='".$v['field_ename']."'>
+                                                            <span class='demo--radioInput'></span>$v1
+                                                         </label>";
+                                                }
+                                            }
+                                            break;
+                                        case 3:
+                                            if($v['field_values']){
+                                                $arr1 = explode(',', $v['field_values']);
+                                                $arr2 = explode(',', $diyValues[$v["field_ename"]]);
+                                                foreach($arr1 as $k2 => $v2){
+                                                    if(in_array($v2,$arr2)){
+                                                        $checked = 'checked=checked';
+                                                    } else {
+                                                        $checked ='';
+                                                    }
+                                                    echo "<div class='checkbox checkbox-inline'>
+                                                            <input id='isRequired' name='".$v['field_ename']."[]' type='checkbox' $checked value='$v2'>
+                                                            <label for='isRequired'>$v2</label>
+                                                          </div>";
+                                                }
+                                            }
+                                            break;
+                                        case 4:
+                                            if($v['field_values']){
+                                                $arr2 = explode(',', $v['field_values']);
+                                                echo "<select name='".$v['field_ename']."' class='selectpicker form-control' data-size='10'>";
+                                                foreach($arr2 as $k3 => $v3){
+                                                    if($diyValues[$v["field_ename"]] == $v3){
+                                                        $selected = 'selected=selected';
+                                                    } else {
+                                                        $selected ='';
+                                                    }
+                                                    echo "<option value='$v3' $selected>$v3</option>";
+                                                }
+                                                echo " </select>";
+                                            }
+                                            break;
+                                        case 5:
+                                            echo "<textarea class='form-control' style='height: 150px' name='".$v['field_ename']."'>".$diyValues[$v["field_ename"]]."</textarea>";
+                                            break;
+                                        case 6:
+                                            echo "<input type='file' name='".$v['field_ename']."'/>";
+                                                if($diyValues[$v["field_ename"]]){
+                                                    echo "<img src='__IMG__/".$diyValues[$v["field_ename"]]."' style='width: 60px;height: 40px'/>
+                                                            <a onclick='delimg(this);' class='delete btn btn-default btn-xs btn-icon' href='javascript:;' title='' data-toggle='tooltip' data-table='' data-id='43' data-original-title='删除'>
+                                                                <i class='iconfont icon-close'></i>
+                                                            </a>";
+                                                }
+                                            break;
+                                        case 9:
+                                            echo get_ueditor($v['field_ename'], $diyValues[$v['field_ename']]);
+                                            break;
+                                        default:
+
+                                            break;
+                                    }
+                                ?>
+
+                            </div>
+                        </div>
+                    <?php endforeach;?>
+
+                    <!--自定义模型字段-->
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label" for="table_name">点击量:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <input id="click" name="click" value="{$artList['click']}" class="form-control" type="text" maxlength="9">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label item-required" >描述:</label>
+                        <div class="col-xs-9 col-sm-4" title="描述" data-toggle="tooltip">
+                            <textarea class="form-control" style="height: 150px" name="describe">{$artList['describe']}</textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label item-required" >文章内容:</label>
+                        <div class="col-xs-9 col-sm-4" title="描述" data-toggle="tooltip">
+                            <textarea id="content" name="content">{$artList['content']}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-xs-9 col-sm-10 col-xs-offset-3 col-sm-offset-2">
+                            <span class="btn btn-primary" id="tijiao" onclick="prot();" >确 定</span>
+                            <button class="btn btn-default" type="button" data-action="back">返 回</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>
+<script src="__ADMIN__/js/tip.js"></script>
+<script>
+    function prot(){
+        var form = new FormData(document.getElementById("form"));
+        $.ajax({
+            url:"{:url('admin/Article/edit')}",
+            type:"POST",
+            data:form,
+            processData:false,
+            contentType:false,
+            success:function(data){
+                var t = JSON.parse(data);
+
+                if (t.status == 1) {
+                    tip(t.msg, t.status, t.url);
+                } else {
+                    tip(t.msg, t.status, '');
+                }
+            },
+            error:function () {
+                tip(data.msg, 2);
+            }
+        });
+    }
+</script>
+<script type="text/javascript">
+    //实例化编辑器
+    //建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
+    UE.getEditor('content',{
+        initialFrameWidth:800,
+        initialFrameHeight:400,
+        toolbars: [[
+            'fullscreen', 'source', 'undo', 'redo','bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript','removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist','selectall', 'cleardoc'
+        ]]
+    });
+</script>
+
+<!--ajax删除自定义文件-->
+<script>
+    function delimg(o) {
+        layer.confirm('确定要删除吗？', {icon: 3, title:'提示'} ,function (index) {
+            var img = $(o).prev();
+            var input = img.prev();
+            var field_name = input.attr('name');
+
+            img.remove();
+            $(o).remove();
+
+            var art_id = "{$artId}";
+            var midel_id = "{$modelId}";
+
+            $.ajax({
+                type : 'GET',
+                url  : "{:url('Article/ajaxDelImg')}",
+                dataType : 'json',
+                data:{art_id:art_id,midel_id:midel_id,field_name:field_name},
+                success:function (data) {
+                    if (data == 1) {
+                        layer.msg('删除成功！', {icon: 1});
+                    } else {
+                        layer.msg('删除成功！', {icon: 2});
+                    }
+                }
+            });
+
+            layer.close(index);
+        });
+
+    }
+</script>

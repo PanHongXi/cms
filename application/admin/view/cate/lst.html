@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="author" content="云琰 Team">
+    <meta name="copyright" content="云琰">
+    <title>导航管理 - 云琰</title>
+    <link href="/favicon.ico" rel="icon">
+    <link href="__ADMIN__/css/bootstrap_1.css" rel="stylesheet">
+    <link href="__ADMIN__/css/iconfont_1.css" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome_1.css" rel="stylesheet">
+    <link href="__ADMIN__/css/awesome-bootstrap-checkbox_1.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base_3.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="__ADMIN__/js/html5shiv_1.js"></script>
+    <script src="__ADMIN__/js/respond_1.js"></script>
+    <![endif]-->
+    <script src="__ADMIN__/js/jquery_1.js"></script>
+    <script src="__ADMIN__/js/jquery.js"></script>
+    <script src="__ADMIN__/js/bootstrap_1.js"></script>
+    <script src="__ADMIN__/js/bootstrap-growl_1.js"></script>
+    <script src="__ADMIN__/js/bootbox.js"></script>
+    <script src="__ADMIN__/js/jquery.nicescroll.js"></script>
+    <script src="__ADMIN__/js/jquery.cookie_1.js"></script>
+    <script src="__ADMIN__/js/underscore_1.js"></script>
+    <script src="__ADMIN__/js/url_1.js"></script>
+    <script src="__ADMIN__/js/velocity.js"></script>
+    <script src="__ADMIN__/js/velocity.ui.js"></script>
+    <script src="__ADMIN__/js/base_1.js"></script>
+    <script src="__ADMIN__/js/base.js"></script>
+    <script src="__ADMIN__/js/layer.js"></script>
+    <script src="__ADMIN__/js/tip.js"></script>
+    <style>
+        .open{
+            border: 1px solid #ccc;
+            padding: 0 2px 0 2px;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        $().ready(function() {
+
+            var $delete = $("a.delete");
+
+            // 删除
+            $delete.delete({
+                url: "{:url('admin/Cate/del')}",
+                data: function($element) {
+                    return {
+                        id: $element.data("id")
+                    }
+                }
+            }).on("success.shopxx.delete", function(event) {
+                var $element = $(event.target);
+
+                $element.closest("tr").velocity("fadeOut", {
+                    complete: function() {
+                        $(this).remove();
+                        if ($("a.delete").length < 1) {
+                            location.reload(true);
+                        }
+                    }
+                });
+            });
+
+        });
+    </script>
+</head>
+<body class="admin">
+{include file="common/header"}
+<script>
+    $().ready(function() {
+
+        var $window = $(window);
+        var $body = $("body");
+        var $mainSidebarCollapseToggle = $("[data-toggle='mainSidebarCollapse']");
+        var $mainSidebar = $("#mainSidebar");
+        var $searchForm = $("#mainSidebar .search form");
+        var $searchValue = $("#mainSidebar .search input[name='searchValue']");
+        var $panelCollapse = $("#mainSidebar .panel-collapse");
+
+        // 主侧边栏折叠
+        $mainSidebarCollapseToggle.click(function() {
+            var niceScroll = $mainSidebar.getNiceScroll();
+            var interval = setInterval(function() {
+                niceScroll.resize();
+            }, 10);
+
+            if ($window.width() > 767) {
+                $body.removeClass("main-sidebar-expanded").toggleClass("main-sidebar-mini");
+            } else {
+                $body.removeClass("main-sidebar-mini").toggleClass("main-sidebar-expanded");
+            }
+
+            $body.one("bsTransitionEnd", function() {
+                niceScroll.resize();
+                window.clearInterval(interval);
+            }).emulateTransitionEnd(500);
+        });
+
+        // 主侧边栏滚动条
+        $mainSidebar.niceScroll({
+            cursorwidth: "4px",
+            cursorcolor: "#ffffff",
+            cursorborder: "0px",
+            cursoropacitymax: 0.4
+        });
+
+        // 搜索
+        $searchForm.submit(function() {
+            if ($.trim($searchValue.val()) == "") {
+                return false;
+            }
+        });
+
+        // 面板折叠
+        $panelCollapse.on("shown.bs.collapse hidden.bs.collapse", function() {
+            $mainSidebar.getNiceScroll().resize();
+        });
+
+    });
+</script>
+{include file="common/left"}
+
+<main>
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <li>
+                <a href="{:url('Index/index')}">
+                    <i class="iconfont icon-homefill"></i>
+                    首页
+                </a>
+            </li>
+            <li class="active">导航列表</li>
+        </ol>
+        <form action="" method="post">
+            <input name="pageSize" type="hidden" value="20">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-9">
+                            <div class="btn-group">
+                                <!--<a class="btn btn-default" href="{:url('Conf/cSave')}" data-redirect-url="{:url('Conf/cSave')}">-->
+                                <a class="btn btn-default" href="{:url('Cate/save')}">
+                                    <i class="iconfont icon-add"></i>
+                                    添加
+                                </a>
+                                <button class="btn btn-default" type="button" data-action="delete" disabled>
+                                    <i class="iconfont icon-close"></i>
+                                    删除
+                                </button>
+                                <button class="btn btn-default" type="button" data-action="refresh">
+                                    <i class="iconfont icon-refresh"></i>
+                                    刷新
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-3">
+                            <div id="search" class="input-group">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-default" type="button" data-toggle="dropdown">
+                                        <span>名称</span>
+                                        <span class="caret"></span>
+                                    </button>
+                                </div>
+                                <input name="searchValue" class="form-control"  type="text" value="" placeholder="搜 索" x-webkit-speech="x-webkit-speech" x-webkit-grammar="builtin:search">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-default" type="submit">
+                                        <i class="iconfont icon-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr pid="0">
+                                <th>
+                                    <a href="javascript:;" data-order-property="name">
+                                        收缩
+                                    </a>
+                                </th>
+                                <th>
+                                    <div class="checkbox">
+                                        <input type="checkbox" data-toggle="checkAll">
+                                        <label></label>
+                                    </div>
+                                </th>
+                                <th>
+                                    <a href="javascript:;" data-order-property="name">
+                                        名称
+                                        <i class="iconfont icon-biaotou-kepaixu"></i>
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="javascript:;" data-order-property="isBlankTarget">
+                                        导航标题
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="javascript:;" data-order-property="navigationGroup.name">
+                                        是否隐藏
+                                        <i class="iconfont icon-biaotou-kepaixu"></i>
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="javascript:;" data-order-property="navigationGroup.name">
+                                        导航属性
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="javascript:;" data-order-property="navigationGroup.name">
+                                        所属模型
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="javascript:;" data-order-property="order">
+                                        排序
+                                        <i class="iconfont icon-biaotou-kepaixu"></i>
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="javascript:;" data-order-property="navigationGroup.name">
+                                        图片
+                                    </a>
+                                </th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {volist name="list" id="list"}
+                                <tr id="{$list['id']}" pid="{$list['pid']}">
+                                    <td><span id="span" class="open">+</span></td>
+                                    <td>
+                                        <div class="checkbox">
+                                            <input name="ids[]" type="checkbox" value="{$list['id']}">
+                                            <label></label>
+                                        </div>
+                                    </td>
+                                    <td><?php echo str_repeat('&nbsp;&nbsp;', $list['level']*2);?><a href="{:url('Article/lst',array('cateId'=> $list['id'],'modelId' =>$list['model_id']))}">{$list['cate_name']}</a></td>
+                                    <td>{$list['title']}</td>
+                                    <td>
+                                        {if condition="$list['enabled'] eq 0 "}
+                                            <a style="cursor: pointer" onclick="changeStatus(this)" cateId="{$list['id']}"><i class="text-red iconfont icon-close"></i></a>
+                                        {else /}
+                                            <a style="cursor: pointer" onclick="changeStatus(this)" cateId="{$list['id']}"><i class="text-green iconfont icon-check"></i></a>
+                                        {/if}
+                                    </td>
+                                    <td>
+                                        {if condition="$list['cate_attr'] eq 1 "}
+                                        列表页导航
+                                        {else /}
+                                        频道页导航
+                                        {/if}
+                                    </td>
+                                    <td>{$list['model_name']}</td>
+                                    <td><input style="width: 60px" name="sort[{$list['id']}]" class="form-control" type="text" value="{$list['sort']}"></td>
+                                    <td>
+                                        {if condition="$list['img'] eq '' "}
+                                            <img style="width: 30px;height: 20px" src="__ADMIN__/img/t.png">
+                                        {else /}
+                                            <img style="width: 30px;height: 20px" src="__IMG__/{$list['img']}">
+                                        {/if}
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-default btn-xs btn-icon" href="{:url('Cate/edit', array('cateId' => $list['id']))}" title="编辑" data-toggle="tooltip" data-redirect-url>
+                                            <i class="iconfont icon-write"></i>
+                                        </a>
+                                        <a class="delete btn btn-default btn-xs btn-icon" href="javascript:;" title="" data-toggle="tooltip" data-id="{$list['id']}" data-original-title="删除">
+                                            <i class="iconfont icon-close"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {/volist}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="panel-footer text-right">
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="col-xs-9 col-sm-10 col-xs-offset-3 col-sm-offset-2">
+                                <button style="margin-right: 33%" class="btn btn-primary" type="submit">保 存</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>
+<script type="text/javascript">
+    //导航收缩状态
+    $('tr[pid!=0]').hide();
+    $('.open').click(function () {
+        var id = $(this).parent().parent('tr').attr('id');
+        if ($(this).text() == '+') {
+            $(this).text('-');
+            $('tr[pid='+id+']').show();
+        } else {
+            $(this).text('+');
+            // $('tr[pid='+id+']').hide();
+
+            $.ajax({
+                type:"post",
+                dataType:"json",
+                data:{cateId:id},
+                url:"{:url('Cate/ajaxList')}",
+                success:function (data) {
+                   var sonids = [];
+                   var idsobj = $('tr[pid!=0]');
+                   idsobj.each(function (k, v) {
+                       sonids.push($(this).attr('id'));
+                   });
+
+                   $.each(data, function (k, v) {
+                       if ($.inArray(v, sonids)) {
+                           $('tr[id='+v+']').hide();
+                           $('tr[id='+v+']').find('span:first').text('+');
+                       }
+                   });
+                }
+            });
+
+        }
+    });
+
+    //改变状态
+    function changeStatus(o) {
+        var cateId = $(o).attr("cateId");
+        $.ajax({
+            type:"post",
+            dataType:"json",
+            data:{cateId:cateId},
+            url:"{:url('Cate/changeStatus')}",
+            success:function (data) {
+                if(data == 1){
+                    location.replace(location.href);
+                }
+                if (data == 2) {
+                    location.replace(location.href);
+                }
+            }
+        });
+    }
+
+</script>
+

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="author" content="云琰 Team">
+    <meta name="copyright" content="云琰">
+    <title>添加配置 - 云琰</title>
+    <link href="/favicon.ico" rel="icon">
+    <link href="__ADMIN__/css/bootstrap.css" rel="stylesheet">
+    <link href="__ADMIN__/css/iconfont.css" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome.css" rel="stylesheet">
+    <link href="__ADMIN__/css/bootstrap-select.css" rel="stylesheet">
+    <link href="__ADMIN__/css/ajax-bootstrap-select.css" rel="stylesheet">
+    <link href="__ADMIN__/css/awesome-bootstrap-checkbox.css" rel="stylesheet">
+    <link href="__ADMIN__/css/bootstrap-fileinput.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base_2.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base_3.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="__ADMIN__/js/html5shiv.js"></script>
+    <script src="__ADMIN__/js/respond.js"></script>
+    <![endif]-->
+    <script src="__ADMIN__/js/jquery.js"></script>
+    <script src="__ADMIN__/js/bootstrap.js"></script>
+    <script src="__ADMIN__/js/bootstrap-growl.js"></script>
+    <script src="__ADMIN__/js/bootstrap-select.js"></script>
+    <script src="__ADMIN__/js/ajax-bootstrap-select.js"></script>
+    <script src="__ADMIN__/js/bootstrap-fileinput.js"></script>
+    <script src="__ADMIN__/js/jquery.nicescroll.js"></script>
+    <script src="__ADMIN__/js/jquery.validate.js"></script>
+    <script src="__ADMIN__/js/jquery.validate.additional.js"></script>
+    <script src="__ADMIN__/js/jquery.form.js"></script>
+    <script src="__ADMIN__/js/jquery.cookie.js"></script>
+    <script src="__ADMIN__/js/underscore.js"></script>
+    <script src="__ADMIN__/js/url.js"></script>
+    <script src="__ADMIN__/js/base.js"></script>
+    <script src="__ADMIN__/js/base_1.js"></script>
+</head>
+<body class="admin">
+{include file="common/header"}
+<script>
+    $().ready(function() {
+
+        var $document = $(document);
+        var $mainHeaderLogout = $("#mainHeaderLogout");
+
+        // 用户注销
+        $mainHeaderLogout.click(function() {
+            $document.trigger("loggedOut.shopxx.user", $.getCurrentUser());
+        });
+
+    });
+</script>
+<script>
+    $().ready(function() {
+
+        var $window = $(window);
+        var $body = $("body");
+        var $mainSidebarCollapseToggle = $("[data-toggle='mainSidebarCollapse']");
+        var $mainSidebar = $("#mainSidebar");
+        var $searchForm = $("#mainSidebar .search form");
+        var $searchValue = $("#mainSidebar .search input[name='searchValue']");
+        var $panelCollapse = $("#mainSidebar .panel-collapse");
+
+        // 主侧边栏折叠
+        $mainSidebarCollapseToggle.click(function() {
+            var niceScroll = $mainSidebar.getNiceScroll();
+            var interval = setInterval(function() {
+                niceScroll.resize();
+            }, 10);
+
+            if ($window.width() > 767) {
+                $body.removeClass("main-sidebar-expanded").toggleClass("main-sidebar-mini");
+            } else {
+                $body.removeClass("main-sidebar-mini").toggleClass("main-sidebar-expanded");
+            }
+
+            $body.one("bsTransitionEnd", function() {
+                niceScroll.resize();
+                window.clearInterval(interval);
+            }).emulateTransitionEnd(500);
+        });
+
+        // 主侧边栏滚动条
+        $mainSidebar.niceScroll({
+            cursorwidth: "4px",
+            cursorcolor: "#ffffff",
+            cursorborder: "0px",
+            cursoropacitymax: 0.4
+        });
+
+        // 搜索
+        $searchForm.submit(function() {
+            if ($.trim($searchValue.val()) == "") {
+                return false;
+            }
+        });
+
+        // 面板折叠
+        $panelCollapse.on("shown.bs.collapse hidden.bs.collapse", function() {
+            $mainSidebar.getNiceScroll().resize();
+        });
+
+    });
+</script>
+{include file="common/left"}
+<main>
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <li>
+                <a href="{:url('Index/index')}">
+                    <i class="iconfont icon-homefill"></i>
+                    首页
+                </a>
+            </li>
+            <li class="active">添加配置</li>
+        </ol>
+        <form class="form-horizontal" id="form" enctype="multipart/form-data" action="" method="post">
+            <!--<form class="form-horizontal" id="uploadForm" enctype="multipart/form-data">-->
+            <input type="hidden" name="id" value="{$list['id']}"/>
+            <div class="panel panel-default">
+                <div class="panel-heading">添加配置</div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label item-required" for="cname">中文名称:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <input id="cname" name="cname" value="{$list['cname']}" class="form-control" type="text" maxlength="200">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label item-required" for="ename">英文名称:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <input id="ename" name="ename" value="{$list['ename']}" class="form-control" type="text" maxlength="200">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label">配置类型:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <select name="dt_type" class="selectpicker form-control" data-size="10">
+                                <option value="1" {if condition="$list['dt_type'] eq 1"}selected="selected"{/if}>文本输入框</option>
+                                <option value="2" {if condition="$list['dt_type'] eq 2"}selected="selected"{/if}>单选</option>
+                                <option value="3" {if condition="$list['dt_type'] eq 3"}selected="selected"{/if}>复选</option>
+                                <option value="4" {if condition="$list['dt_type'] eq 4"}selected="selected"{/if}>下拉菜单</option>
+                                <option value="5" {if condition="$list['dt_type'] eq 5"}selected="selected"{/if}>文本域</option>
+                                <option value="6" {if condition="$list['dt_type'] eq 6"}selected="selected"{/if}>附件类型</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label">配置分类:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <select name="cf_type" class="selectpicker form-control" data-size="10">
+                                <option value="1" {if condition="$list['cf_type'] eq 1"}selected="selected"{/if}>站点基本信息</option>
+                                <option value="2" {if condition="$list['cf_type'] eq 2"}selected="selected"{/if}>联系方式</option>
+                                <option value="3" {if condition="$list['cf_type'] eq 3"}selected="selected"{/if}>SEO设置</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label" for="value">值:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <textarea id="value" name="value" class="form-control" rows="5">{$list['value']}</textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label" for="valuess">可选值:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <textarea id="valuess" name="valuess" class="form-control" rows="5">{$list['valuess']}</textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label">设置:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <div class="checkbox">
+                                <input id="isEnabled" name="enabled" type="checkbox" value="1" {if condition="$list['enabled'] eq 1"}checked="checked"{/if}/>
+                                <label for="isEnabled">是否启用</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-xs-9 col-sm-10 col-xs-offset-3 col-sm-offset-2">
+                            <span class="btn btn-primary" id="tijiao" onclick="prot();" >确 定</span>
+                            <button onclick="history.go(-1)" class="btn btn-default" type="button" data-action="back">返 回</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</main>
+</body>
+</html>
+<script src="__ADMIN__/js/tip.js"></script>
+<script>
+    function prot(){
+        var form = new FormData(document.getElementById("form"));
+        $.ajax({
+            url:"{:url('admin/Conf/cSave')}",
+            type:"POST",
+            data:form,
+            processData:false,
+            contentType:false,
+            success:function(data){
+                var t = JSON.parse(data);
+
+                if (t.status == 1) {
+                    tip(t.msg, t.status, t.url);
+                } else {
+                    tip(t.msg, t.status, '');
+                }
+            },
+            error:function () {
+                tip(data.msg, 2);
+            }
+        });
+    }
+</script>

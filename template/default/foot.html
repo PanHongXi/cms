@@ -1,0 +1,65 @@
+ <footer class="footer">
+      <div class="footer-main">
+        <div id="a1portalSkin_footerAreaA" class="page-width clearfix"><!-- Start_Module_89208 --><a name="31438" id="31438"></a>
+          <div class="module-default">
+            <div class="module-inner">
+              <div id="a1portalSkin_ctr8920889208_mainArea" class="module-content"><!-- Start_Module_89208 -->
+                <div class="qhd-module">
+                  <div class="column">
+                    {volist name="cateFootRes" id="cateFootRes"}
+                      <div class="col-5-1">
+                        <div id="a1portalSkin_ctr8920889208_Column4C20A20A20A40_QHDCPM89208M1" class="qhd_column_contain"><!-- Start_Module_89209 --><a name="31439" id="31439"></a>
+                          <div class="module-default">
+                            <div class="module-inner">
+                              <div class="module-title module-title-default clearfix">
+                                <div class="module-title-content clearfix">
+                                  <h3 style="" class="">{$cateFootRes['cate_name']}</h3>
+                                </div>
+                              </div>
+                              <div id="a1portalSkin_ctr8920889208_Column4C20A20A20A40_ctr8920989209_mainArea" class="module-content"><!-- Start_Module_89209 --><!-- S link-line -->
+                                <div class="link link-block">
+                                  <ul>
+                                   {volist name="cateFootRes['children']" id="cateFootRes2"}
+                                      <li><a href="
+                                        {if condition="$cateFootRes['cate_attr'] eq 1"}{:url('Cate/index',array('cid' => $cateFootRes['id']))}{/if}
+                                        {if condition="$cateFootRes['cate_attr'] eq 2"}{:url('Page/index',array('cid' => $cateFootRes['id']))}{/if}
+                                        {if condition="$cateFootRes['cate_attr'] eq 3"}{$cateFootRes['link']}{/if}
+                                        " target=""><span>{$cateFootRes2['cate_name']}</span></a></li>
+                                   {/volist}
+                                  </ul>
+                                </div>
+                                <!-- E link-line --><!-- End_Module_89209 --></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    {/volist}
+                    </div> 
+                    <div class="col-5-2 last">
+                      <div id="a1portalSkin_ctr8920889208_Column4C20A20A20A40_QHDCPM89208M4" class="qhd_column_contain"><!-- Start_Module_89212 --><a name="31442" id="31442"></a>
+                        <div class="module-default">
+                          <div class="module-inner">
+                            <div class="module-title module-title-default clearfix">
+                              <div class="module-title-content clearfix">
+                                <h3 style="" class="">广州某某生物科技有限公司</h3>
+                              </div>
+                            </div>
+                            <div id="a1portalSkin_ctr8920889208_Column4C20A20A20A40_ctr8921289212_mainArea" class="module-content"><!-- Start_Module_89212 -->
+                              <div class="qhd-content">
+                                <p> ICP备********号 &nbsp; &nbsp;Copyright © 2014-2016  Thinkphp5视频教程 版权所有 </p>
+                                <p> <a style="display:none" href="http://www.chuanke.com/s2260700.html" title="Thinkphp5视频教程 - 最好的tp学习平台">Thinkphp5视频教程</a></p>
+                                <p> <a href="http://www.chuanke.com/s2260700.html" target="_blank"><img alt="" src="{$temp_src}/img/184210d2-c505-4ad4-8e62-8581f9c865ac.png" style="width: 35px; height: 35px;" /></a>&nbsp; &nbsp;<a href="http://t.qq.com" target="_blank"><img alt="" src="{$temp_src}/img/09f4108c-a904-41dd-8ff8-71ce53d84771.png" style="width: 35px; height: 35px;" /></a></p>
+                              </div>
+                              <!-- End_Module_89212 --></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- End_Module_89208 --></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>

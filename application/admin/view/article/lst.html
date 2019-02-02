@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="author" content="云琰 Team">
+    <meta name="copyright" content="云琰">
+    <title>字段管理 - 云琰</title>
+    <link href="/favicon.ico" rel="icon">
+    <link href="__ADMIN__/css/bootstrap_1.css" rel="stylesheet">
+    <link href="__ADMIN__/css/iconfont_1.css" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome_1.css" rel="stylesheet">
+    <link href="__ADMIN__/css/awesome-bootstrap-checkbox_1.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base_3.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="__ADMIN__/js/html5shiv_1.js"></script>
+    <script src="__ADMIN__/js/respond_1.js"></script>
+    <![endif]-->
+    <script src="__ADMIN__/js/jquery_1.js"></script>
+    <script src="__ADMIN__/js/jquery.js"></script>
+    <script src="__ADMIN__/js/bootstrap_1.js"></script>
+    <script src="__ADMIN__/js/bootstrap-growl_1.js"></script>
+    <script src="__ADMIN__/js/bootbox.js"></script>
+    <script src="__ADMIN__/js/jquery.nicescroll.js"></script>
+    <script src="__ADMIN__/js/jquery.cookie_1.js"></script>
+    <script src="__ADMIN__/js/underscore_1.js"></script>
+    <script src="__ADMIN__/js/url_1.js"></script>
+    <script src="__ADMIN__/js/velocity.js"></script>
+    <script src="__ADMIN__/js/velocity.ui.js"></script>
+    <script src="__ADMIN__/js/base_1.js"></script>
+    <script src="__ADMIN__/js/base.js"></script>
+    <script src="__ADMIN__/js/layer.js"></script>
+    <script src="__ADMIN__/js/tip.js"></script>
+    <style>
+        .open{
+            border: 1px solid #ccc;
+            padding: 0 2px 0 2px;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        $().ready(function() {
+
+            var $delete = $("a.delete");
+
+            // 删除
+            $delete.delete({
+                url: "{:url('admin/Article/del')}",
+                data: function($element) {
+                    return {
+                        id: $element.data("id"),
+                        table_name: $element.data("table")
+                    }
+                }
+            }).on("success.shopxx.delete", function(event) {
+                var $element = $(event.target);
+
+                $element.closest("tr").velocity("fadeOut", {
+                    complete: function() {
+                        $(this).remove();
+                        if ($("a.delete").length < 1) {
+                            location.reload(true);
+                        }
+                    }
+                });
+            });
+
+        });
+    </script>
+</head>
+<body class="admin">
+{include file="common/header"}
+<script>
+    $().ready(function() {
+
+        var $document = $(document);
+        var $mainHeaderLogout = $("#mainHeaderLogout");
+
+        // 用户注销
+        $mainHeaderLogout.click(function() {
+            $document.trigger("loggedOut.shopxx.user", $.getCurrentUser());
+        });
+
+    });
+</script>
+<script>
+    $().ready(function() {
+
+        var $window = $(window);
+        var $body = $("body");
+        var $mainSidebarCollapseToggle = $("[data-toggle='mainSidebarCollapse']");
+        var $mainSidebar = $("#mainSidebar");
+        var $searchForm = $("#mainSidebar .search form");
+        var $searchValue = $("#mainSidebar .search input[name='searchValue']");
+        var $panelCollapse = $("#mainSidebar .panel-collapse");
+
+        // 主侧边栏折叠
+        $mainSidebarCollapseToggle.click(function() {
+            var niceScroll = $mainSidebar.getNiceScroll();
+            var interval = setInterval(function() {
+                niceScroll.resize();
+            }, 10);
+
+            if ($window.width() > 767) {
+                $body.removeClass("main-sidebar-expanded").toggleClass("main-sidebar-mini");
+            } else {
+                $body.removeClass("main-sidebar-mini").toggleClass("main-sidebar-expanded");
+            }
+
+            $body.one("bsTransitionEnd", function() {
+                niceScroll.resize();
+                window.clearInterval(interval);
+            }).emulateTransitionEnd(500);
+        });
+
+        // 主侧边栏滚动条
+        $mainSidebar.niceScroll({
+            cursorwidth: "4px",
+            cursorcolor: "#ffffff",
+            cursorborder: "0px",
+            cursoropacitymax: 0.4
+        });
+
+        // 搜索
+        $searchForm.submit(function() {
+            if ($.trim($searchValue.val()) == "") {
+                return false;
+            }
+        });
+
+        // 面板折叠
+        $panelCollapse.on("shown.bs.collapse hidden.bs.collapse", function() {
+            $mainSidebar.getNiceScroll().resize();
+        });
+
+    });
+</script>
+{include file="common/left"}
+
+<main>
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <li>
+                <a href="{:url('Index/index')}">
+                    <i class="iconfont icon-homefill"></i>
+                    首页
+                </a>
+            </li>
+            <li class="active">文章列表</li>
+        </ol>
+        <form action="" method="post">
+            <input name="pageSize" type="hidden" value="20">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-9">
+                            <div class="btn-group">
+                                <!--<a class="btn btn-default" href="{:url('Conf/cSave')}" data-redirect-url="{:url('Conf/cSave')}">-->
+                                {if condition="$modelId neq 0"}
+                                    <a class="btn btn-default" href="{:url('Article/add',array('cateId'=> $cateId,'modelId' =>$modelId))}">
+                                        <i class="iconfont icon-add"></i>
+                                        添加
+                                    </a>
+                                {/if}
+                                <button class="btn btn-default" type="button" data-action="delete" disabled>
+                                    <i class="iconfont icon-close"></i>
+                                    删除
+                                </button>
+                                <button class="btn btn-default" type="button" data-action="refresh">
+                                    <i class="iconfont icon-refresh"></i>
+                                    刷新
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-3">
+                            <div id="search" class="input-group">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-default" type="button" data-toggle="dropdown">
+                                        <span>名称</span>
+                                        <span class="caret"></span>
+                                    </button>
+                                </div>
+                                <input name="searchValue" class="form-control"  type="text" value="" placeholder="搜 索" x-webkit-speech="x-webkit-speech" x-webkit-grammar="builtin:search">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-default" type="submit">
+                                        <i class="iconfont icon-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr pid="0">
+                                <th>
+                                    <div class="checkbox">
+                                        <input type="checkbox" data-toggle="checkAll">
+                                        <label></label>
+                                    </div>
+                                </th>
+                                <th>
+                                    <a href="javascript:;" data-order-property="name">
+                                        文章标题
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="javascript:;" data-order-property="isBlankTarget">
+                                        属性
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="javascript:;" data-order-property="navigationGroup.name">
+                                        所属栏目
+                                    </a>
+                                </th>
+                                <th>
+                                    <a href="javascript:;" data-order-property="order">
+                                        所属模型
+                                    </a>
+                                </th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {volist name="list" id="list"}
+                                <tr>
+                                    <td>
+                                        <div class="checkbox">
+                                            <input name="ids[]" type="checkbox" value="{$list['id']}">
+                                            <label></label>
+                                        </div>
+                                    </td>
+                                    <td>{$list['title']}</td>
+                                    <td>{$list['attr']}</td>
+                                    <td>{$list['cate_name']}</td>
+                                    <td>{$list['model_name']}</td>
+                                    <td>
+                                        <a class="btn btn-default btn-xs btn-icon" href="{:url('Article/edit',array('art_id'=>$list['id'],'model_id'=>$list['model_id'],'cate_id'=>$list['cate_id']))}" title="编辑" data-toggle="tooltip" data-redirect-url>
+                                            <i class="iconfont icon-write"></i>
+                                        </a>
+                                       <a class="delete btn btn-default btn-xs btn-icon" href="javascript:;" title="" data-toggle="tooltip" data-id="{$list['id']}" data-original-title="删除">
+                                                <i class="iconfont icon-close"></i>
+                                            </a>
+                                    </td>
+                                </tr>
+                            {/volist}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="panel-footer text-right">
+                    <ul class="pagination">
+                        {$page}
+                    </ul>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</main>
+</body>
+</html>
+<script type="text/javascript">
+    //改变状态
+    function changeStatus(o) {
+        var modelId = $(o).attr("modelId");
+        $.ajax({
+            type:"post",
+            dataType:"json",
+            data:{modelId:modelId},
+            url:"{:url('Model/changeStatus')}",
+            success:function (data) {
+                if(data == 1){
+                    location.replace(location.href);
+                }
+                if (data == 2) {
+                    location.replace(location.href);
+                }
+            }
+        });
+    }
+</script>
+

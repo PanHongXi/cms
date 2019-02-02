@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="author" content="SHOP++ Team">
+    <meta name="copyright" content="SHOP++">
+    <title>添加广告 - 云琰</title>
+    <link href="/favicon.ico" rel="icon">
+    <link href="__ADMIN__/css/bootstrap.css" rel="stylesheet">
+    <link href="__ADMIN__/css/iconfont.css" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome.css" rel="stylesheet">
+    <link href="__ADMIN__/css/bootstrap-select.css" rel="stylesheet">
+    <link href="__ADMIN__/css/awesome-bootstrap-checkbox.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base_3.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="__ADMIN__/plus/webuploader/webuploader.css">
+    <link rel="stylesheet" type="text/css" href="__ADMIN__/plus/webuploader/demo.css">
+    <!--[if lt IE 9]>
+    <script src="__ADMIN__/js/html5shiv.js"></script>
+    <script src="__ADMIN__/js/respond.js"></script>
+    <![endif]-->
+    <script src="__ADMIN__/js/jquery.js"></script>
+    <script src="__ADMIN__/js/bootstrap.js"></script>
+    <script src="__ADMIN__/js/bootstrap-growl.js"></script>
+    <script src="__ADMIN__/js/bootstrap-select.js"></script>
+    <script src="__ADMIN__/js/jquery.nicescroll.js"></script>
+    <script src="__ADMIN__/js/jquery.validate.js"></script>
+    <script src="__ADMIN__/js/jquery.validate.additional.js"></script>
+    <script src="__ADMIN__/js/jquery.form.js"></script>
+    <script src="__ADMIN__/js/jquery.cookie.js"></script>
+    <script src="__ADMIN__/js/underscore.js"></script>
+    <script src="__ADMIN__/js/url.js"></script>
+    <script src="__ADMIN__/js/velocity.js"></script>
+    <script src="__ADMIN__/js/velocity.ui.js"></script>
+    <script src="__ADMIN__/js/base.js"></script>
+    <script src="__ADMIN__/js/base_1.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="__ADMIN__/plus/webuploader/webuploader.js"></script>
+
+    <script src="__ADMIN__/plus/ueditor/ueditor.config.js"></script>
+    <script src="__ADMIN__/plus/ueditor/ueditor.all.min.js"></script>
+    <script src="__ADMIN__/plus/ueditor/lang/zh-cn/zh-cn.js"></script>
+    <style type="text/css">
+       
+    </style>
+    <script>
+        var url = "{:url('Article/upload')}";
+        var swf = "__ADMIN__/plus/webuploader/";
+
+        $().ready(function() {
+
+            var $businessAttributeForm = $("#businessAttributeForm");
+            var $type = $("#type");
+            var $pattern = $("#pattern");
+            var $addOption = $("#addOption");
+            var $option = $("#option");
+
+            // 类型
+            $type.change(function() {
+                var value = $(this).val();
+                var currentOptions = getCurrentOptions().length > 0 ? getCurrentOptions() : [""];
+
+                buildOption(currentOptions);
+                if (value == "SELECT" || value == "CHECKBOX") {
+                    if ($pattern.is(":visible")) {
+                        $pattern.prop("disabled", true).closest(".form-group").velocity("slideUp");
+                        $option.velocity("slideDown");
+                        $addOption.closest(".form-group").velocity("slideDown");
+                    }
+                } else {
+                    if ($pattern.is(":hidden")) {
+                        $pattern.prop("disabled", false).closest(".form-group").velocity("slideDown");
+                        $option.velocity("slideUp");
+                        $addOption.closest(".form-group").velocity("slideUp");
+                    }
+                }
+            });
+
+            // 生成可选项
+            function buildOption(options) {
+                $option.html(optionTemplate({
+                    options: options
+                }));
+            }
+
+            // 获取当前可选项
+            function getCurrentOptions() {
+                return $option.find("input.options").map(function() {
+                    return $(this).val();
+                }).get();
+            }
+
+            // 增加可选项
+            $addOption.click(function() {
+                var options = getCurrentOptions();
+
+                options.push("");
+                buildOption(options);
+            });
+
+            // 移除可选项
+            $option.on("click", "button.remove", function() {
+                var $element = $(this);
+
+                $element.closest(".form-group").velocity("slideUp", {
+                    complete: function() {
+                        $(this).remove();
+
+                        buildOption(getCurrentOptions());
+                    }
+                });
+            });
+
+            $.validator.addClassRules({
+                options: {
+                    required: true
+                }
+            });
+
+            // 表单验证
+            $businessAttributeForm.validate({
+                rules: {
+                    name: "required",
+                    pattern: {
+                        remote: {
+                            url: "/admin/business_attribute/check_pattern",
+                            cache: false
+                        }
+                    },
+                    order: "digits"
+                },
+                messages: {
+                    pattern: {
+                        remote: "语法错误"
+                    }
+                }
+            });
+
+        });
+    </script>
+    <script src="__ADMIN__/plus/webuploader/demo.js"></script>
+</head>
+<body class="admin">
+{include file="common/header"}
+<script>
+    $().ready(function() {
+
+        var $document = $(document);
+        var $mainHeaderLogout = $("#mainHeaderLogout");
+
+        // 用户注销
+        $mainHeaderLogout.click(function() {
+            $document.trigger("loggedOut.shopxx.user", $.getCurrentUser());
+        });
+
+    });
+</script>
+<script>
+    $().ready(function() {
+
+        var $window = $(window);
+        var $body = $("body");
+        var $mainSidebarCollapseToggle = $("[data-toggle='mainSidebarCollapse']");
+        var $mainSidebar = $("#mainSidebar");
+        var $searchForm = $("#mainSidebar .search form");
+        var $searchValue = $("#mainSidebar .search input[name='searchValue']");
+        var $panelCollapse = $("#mainSidebar .panel-collapse");
+
+        // 主侧边栏折叠
+        $mainSidebarCollapseToggle.click(function() {
+            var niceScroll = $mainSidebar.getNiceScroll();
+            var interval = setInterval(function() {
+                niceScroll.resize();
+            }, 10);
+
+            if ($window.width() > 767) {
+                $body.removeClass("main-sidebar-expanded").toggleClass("main-sidebar-mini");
+            } else {
+                $body.removeClass("main-sidebar-mini").toggleClass("main-sidebar-expanded");
+            }
+
+            $body.one("bsTransitionEnd", function() {
+                niceScroll.resize();
+                window.clearInterval(interval);
+            }).emulateTransitionEnd(500);
+        });
+
+        // 主侧边栏滚动条
+        $mainSidebar.niceScroll({
+            cursorwidth: "4px",
+            cursorcolor: "#ffffff",
+            cursorborder: "0px",
+            cursoropacitymax: 0.4
+        });
+
+        // 搜索
+        $searchForm.submit(function() {
+            if ($.trim($searchValue.val()) == "") {
+                return false;
+            }
+        });
+
+        // 面板折叠
+        $panelCollapse.on("shown.bs.collapse hidden.bs.collapse", function() {
+            $mainSidebar.getNiceScroll().resize();
+        });
+
+    });
+</script>
+{include file="common/left"}
+
+<main>
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <li>
+                <a href="/admin/index">
+                    <i class="iconfont icon-homefill"></i>
+                    首页
+                </a>
+            </li>
+            <li class="active">添加文章</li>
+        </ol>
+        <form id="form" class="ajax-form form-horizontal" action="" method="post" enctype="multipart/form-data">
+            <div class="panel panel-default">
+                <div class="panel-heading">添加文章</div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label item-required" for="name">广告名称:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <input id="name" name="ad_name" class="form-control" type="text" maxlength="200">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label">所属广告位:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <select name="adpos_id" class="selectpicker form-control" data-size="10">
+                                <option value="0">请选择广告位</option>
+                                {volist name="position" id="position"}
+                                    <option value="{$position['id']}">{$position['name']}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label" for="hotSearch">广告类型:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <label class="demo--label">
+                                <input class="demo--radio" id="img" style="cursor:pointer;" value="1" type="radio" checked="checked" name="type">
+                                <span class="demo--radioInput"></span>图片广告
+                            </label>
+                            <label class="demo--label">
+                                <input class="demo--radio" id="lunbo" style="cursor:pointer;" value="2" type="radio" name="type">
+                                <span class="demo--radioInput"></span>轮播广告
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group img">
+                        <label class="col-xs-3 col-sm-2 control-label item-required">广告图片:</label>
+                        <div class="inputFileWrapper">
+                            <label for="inputFile1">
+                                <input type="file" name="file" id="inputFile1"/>
+                                <span class="custorm-style" style="cursor:pointer;">
+                                    <span class="left-button">上传图片</span>
+                                    <span class="right-text" id="rightText"></span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group lunbo" style="display: none;">
+                        <label class="col-xs-3 col-sm-2 control-label item-required">轮播图片:</label>
+                        <span style="float: left;margin-top: 10px;padding: 0 5px 0 0"><a href="javascript:;" onclick="dt(this);">[+]</a></span>
+                        <div class="inputFileWrapper" >
+                            <label for="inputFile">
+                                <input type="file" name="fileimg[]" id="inputFile"/>
+                                <span class="custorm-style" style="cursor:pointer;width: 200px">
+                                    <span class="left-button">上传图片</span>
+                                    <span class="right-text" style="width: 100px;" id="rightTextlunbo"></span>
+                                </span>
+                            </label>
+                            <input style="float: left;width: 250px;height: 40px" placeholder="图片链接..." name="filelink[]" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group link">
+                        <label class="col-xs-3 col-sm-2 control-label" for="table_name">广告链接:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <input id="" name="link" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label" for="sort">排序:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <input id="sort" name="sort" class="form-control" value="50" type="text" maxlength="9">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-3 col-sm-2 control-label">是否启用:</label>
+                        <div class="col-xs-9 col-sm-4">
+                            <div class="checkbox">
+                                <input id="isEnabled" name="status" type="checkbox" value="1" checked="checked"/>
+                                <label for="isEnabled">是否启用</label>
+                            </div>
+                        </div>
+                    </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-xs-9 col-sm-10 col-xs-offset-3 col-sm-offset-2">
+                            <span class="btn btn-primary" id="tijiao" onclick="prot();" >确 定</span>
+                            <!--<button class="btn btn-primary" type="submit">确 定</button>-->
+                            <button class="btn btn-default" type="button" data-action="back">返 回</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>
+<script src="__ADMIN__/js/tip.js"></script>
+<script>
+    function prot(){
+        var form = new FormData(document.getElementById("form"));
+        $.ajax({
+            url:"{:url('admin/Ad/add')}",
+            type:"POST",
+            data:form,
+            processData:false,
+            contentType:false,
+            success:function(data){
+                var t = JSON.parse(data);
+
+                if (t.status == 1) {
+                    tip(t.msg, t.status, t.url);
+                } else {
+                    tip(t.msg, t.status, '');
+                }
+            },
+            error:function () {
+                tip(data.msg, 2);
+            }
+        });
+    }
+
+
+    //上传文件设置
+    var fileBtn = $("input[type=file]");
+    fileBtn.on("change", function(){
+        var index = $(this).val().lastIndexOf("\\");
+
+        var sFileName = $(this).val().substr((index+1));
+
+        $("#rightText").html(sFileName);
+    });
+    //上传文件设置
+    var fileBtn = $("input[type=file]");
+    fileBtn.on("change", function(){
+        var index = $(this).val().lastIndexOf("\\");
+
+        var sFileName = $(this).val().substr((index+1));
+
+        $("#rightTextlunbo").html(sFileName);
+    });
+
+    //广告图片类型处理
+    $("#img").click(function () {
+        $(".img").show();
+        $(".link").show();
+        $(".lunbo").hide();
+    });
+    $("#lunbo").click(function () {
+        $(".img").hide();
+        $(".link").hide();
+        $(".lunbo").show();
+    });
+
+    function dt(o) {
+        var div = $(o).parent().parent();
+
+        if ($(o).html() === "[+]") {
+            var newDiv = div.clone();
+            newDiv.find("a").html("[-]");
+            div.after(newDiv);
+        } else {
+            div.remove();
+        }
+    }
+</script>

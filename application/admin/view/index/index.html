@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="author" content="SHOP++ Team">
+    <meta name="copyright" content="SHOP++">
+    <title>管理中心 - Powered By 云琰</title>
+    <link href="/favicon.ico" rel="icon">
+    <link href="__ADMIN__/css/bootstrap_1.css" rel="stylesheet">
+    <link href="__ADMIN__/css/iconfont_1.css" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome_1.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base_3.css" rel="stylesheet">
+    <link href="__ADMIN__/css/index.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="__ADMIN__/js/html5shiv_1.js"></script>
+    <script src="__ADMIN__/js/respond_1.js"></script>
+    <![endif]-->
+    <script src="__ADMIN__/js/jquery_1.js"></script>
+    <script src="__ADMIN__/js/bootstrap_1.js"></script>
+    <script src="__ADMIN__/js/bootstrap-growl_1.js"></script>
+    <script src="__ADMIN__/js/bootbox.js"></script>
+    <script src="__ADMIN__/js/moment.js"></script>
+    <script src="__ADMIN__/js/jquery.nicescroll.js"></script>
+    <script src="__ADMIN__/js/jquery.validate_1.js"></script>
+    <script src="__ADMIN__/js/jquery.validate.additional_1.js"></script>
+    <script src="__ADMIN__/js/jquery.form_1.js"></script>
+    <script src="__ADMIN__/js/jquery.cookie_1.js"></script>
+    <script src="__ADMIN__/js/underscore_1.js"></script>
+    <script src="__ADMIN__/js/url_1.js"></script>
+    <script src="__ADMIN__/js/jquery.animatenumber.js"></script>
+    <script src="__ADMIN__/js/g2.js"></script>
+    <script src="__ADMIN__/js/base_1.js"></script>
+    <script src="__ADMIN__/js/base_2.js"></script>
+
+</head>
+<body class="admin index">
+{include file="common/header"}
+<script>
+    $().ready(function() {
+
+        var $document = $(document);
+        var $mainHeaderLogout = $("#mainHeaderLogout");
+
+        // 用户注销
+        $mainHeaderLogout.click(function() {
+            $document.trigger("loggedOut.shopxx.user", $.getCurrentUser());
+        });
+
+    });
+</script>
+<script>
+    $().ready(function() {
+
+        var $window = $(window);
+        var $body = $("body");
+        var $mainSidebarCollapseToggle = $("[data-toggle='mainSidebarCollapse']");
+        var $mainSidebar = $("#mainSidebar");
+        var $searchForm = $("#mainSidebar .search form");
+        var $searchValue = $("#mainSidebar .search input[name='searchValue']");
+        var $panelCollapse = $("#mainSidebar .panel-collapse");
+
+        // 主侧边栏折叠
+        $mainSidebarCollapseToggle.click(function() {
+            var niceScroll = $mainSidebar.getNiceScroll();
+            var interval = setInterval(function() {
+                niceScroll.resize();
+            }, 10);
+
+            if ($window.width() > 767) {
+                $body.removeClass("main-sidebar-expanded").toggleClass("main-sidebar-mini");
+            } else {
+                $body.removeClass("main-sidebar-mini").toggleClass("main-sidebar-expanded");
+            }
+
+            $body.one("bsTransitionEnd", function() {
+                niceScroll.resize();
+                window.clearInterval(interval);
+            }).emulateTransitionEnd(500);
+        });
+
+        // 主侧边栏滚动条
+        $mainSidebar.niceScroll({
+            cursorwidth: "4px",
+            cursorcolor: "#ffffff",
+            cursorborder: "0px",
+            cursoropacitymax: 0.4
+        });
+
+        // 搜索
+        $searchForm.submit(function() {
+            if ($.trim($searchValue.val()) == "") {
+                return false;
+            }
+        });
+
+        // 面板折叠
+        $panelCollapse.on("shown.bs.collapse hidden.bs.collapse", function() {
+            $mainSidebar.getNiceScroll().resize();
+        });
+
+    });
+</script>
+{include file="common/left"}
+
+<main>
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <li class="active">管理中心</li>
+        </ol>
+        <div class="row">
+            <div class="col-xs-12 col-sm-3">
+                <div class="section-info bg-blue-light">
+                    <i class="iconfont icon-people"></i>
+                    <h1 id="todayAddedMemberCount"></h1>
+                    <p>今日新增会员</p>
+                    <a href="/admin/member/list">
+                        查看所有会员
+                        <i class="iconfont icon-pullright"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-3">
+                <div class="section-info bg-red-light">
+                    <i class="iconfont icon-crown"></i>
+                    <h1 id="todayAddedBusinessCount"></h1>
+                    <p>今日新增商家</p>
+                    <a href="/admin/business/list">
+                        查看所有商家
+                        <i class="iconfont icon-pullright"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-3">
+                <div class="section-info bg-green-light">
+                    <i class="iconfont icon-cart"></i>
+                    <h1 id="todayAddedPlatformCommission"></h1>
+                    <p>今日新增平台佣金</p>
+                    <a href="/admin/order/list">
+                        查看所有订单
+                        <i class="iconfont icon-pullright"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-3">
+                <div class="section-info bg-purple-light">
+                    <i class="iconfont icon-global"></i>
+                    <h1 id="todayAddedDistributionCommission"></h1>
+                    <p>今日新增分销佣金</p>
+                    <a href="/admin/distributor/list">
+                        查看所有分销员
+                        <i class="iconfont icon-pullright"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-6">
+                <div class="review-info panel panel-default">
+                    <div class="panel-heading">
+                        <h5>审核信息</h5>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <a href="/admin/store/list?status=PENDING">
+                                    <div class="media">
+                                        <div class="media-left hidden-xs hidden-sm hidden-md">
+                                            <i class="bg-blue-light iconfont icon-shop"></i>
+                                        </div>
+                                        <div class="media-body media-middle">
+                                            <h2 class="text-blue-light media-heading">
+                                                0
+                                                <small>个</small>
+                                            </h2>
+                                            <p>店铺审核</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-xs-3">
+                                <a href="/admin/business_cash/list?status=PENDING">
+                                    <div class="media">
+                                        <div class="media-left hidden-xs hidden-sm hidden-md">
+                                            <i class="bg-orange-light iconfont icon-moneybag"></i>
+                                        </div>
+                                        <div class="media-body media-middle">
+                                            <h2 class="text-orange-light media-heading">
+                                                0
+                                                <small>个</small>
+                                            </h2>
+                                            <p>商家提现审核</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-xs-3">
+                                <a href="/admin/category_application/list?status=PENDING">
+                                    <div class="media">
+                                        <div class="media-left hidden-xs hidden-sm hidden-md">
+                                            <i class="bg-yellow-light iconfont icon-cascades"></i>
+                                        </div>
+                                        <div class="media-body media-middle">
+                                            <h2 class="text-yellow-light media-heading">
+                                                0
+                                                <small>个</small>
+                                            </h2>
+                                            <p>经营分类审核</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-xs-3">
+                                <a href="/admin/distribution_cash/list?status=PENDING">
+                                    <div class="media">
+                                        <div class="media-left hidden-xs hidden-sm hidden-md">
+                                            <i class="bg-purple-light iconfont icon-sponsor"></i>
+                                        </div>
+                                        <div class="media-body media-middle">
+                                            <h2 class="text-purple-light media-heading">
+                                                0
+                                                <small>个</small>
+                                            </h2>
+                                            <p>分销提现审核</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <div class="sales-chart panel panel-default">
+                    <div class="panel-heading">
+                        <h5>销量排行榜</h5>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6">
+                                <h3>周销量</h3>
+                                <div class="pull-left">
+                                    <h2 class="text-orange-light">1</h2>
+                                    <a href="/product/detail/1" target="_blank">KOOLIFE 畅玩5C钢化膜</a>
+                                    <span>0</span>
+                                </div>
+                                <div class="pull-left">
+                                    <h2 class="text-yellow-light">2</h2>
+                                    <a href="/product/detail/2" target="_blank">KOLA 红米Note4全屏钢化膜</a>
+                                    <span>0</span>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-6">
+                                <h3>月销量</h3>
+                                <div class="pull-left">
+                                    <h2 class="text-orange-light">1</h2>
+                                    <a href="/product/detail/1" target="_blank">KOOLIFE 畅玩5C钢化膜</a>
+                                    <span>0</span>
+                                </div>
+                                <div class="pull-left">
+                                    <h2 class="text-yellow-light">2</h2>
+                                    <a href="/product/detail/2" target="_blank">KOLA 红米Note4全屏钢化膜</a>
+                                    <span>0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5>订单统计</h5>
+                    </div>
+                    <div class="panel-body">
+                        <div id="orderStatisticChart"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5>资金统计</h5>
+                    </div>
+                    <div class="panel-body">
+                        <div id="amountStatisticChart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-6">
+                <div class="member-info panel panel-default">
+                    <div class="panel-heading">
+                        <h5>会员信息</h5>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <h2 class="text-blue-light">
+                                    <span id="todayAddedMember"></span>
+                                    <small>个</small>
+                                </h2>
+                                <p>今日新增</p>
+                            </div>
+                            <div class="col-xs-3">
+                                <h2 class="text-red-light">
+                                    <span id="yesterdayAddedMemberCount"></span>
+                                    <small>个</small>
+                                </h2>
+                                <p>昨日新增</p>
+                            </div>
+                            <div class="col-xs-3">
+                                <h2 class="text-green-light">
+                                    <span id="currentMonthAddedMemberCount"></span>
+                                    <small>个</small>
+                                </h2>
+                                <p>本月新增</p>
+                            </div>
+                            <div class="last col-xs-3">
+                                <h2 class="text-purple-light">
+                                    406
+                                    <small>个</small>
+                                </h2>
+                                <p>会员总数</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <div class="business-info panel panel-default">
+                    <div class="panel-heading">
+                        <h5>商家信息</h5>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <h2 class="text-blue-light">
+                                    <span id="todayAddedBusiness"></span>
+                                    <small>个</small>
+                                </h2>
+                                <p>今日新增</p>
+                            </div>
+                            <div class="col-xs-3">
+                                <h2 class="text-red-light">
+                                    <span id="yesterdayAddedBusinessCount"></span>
+                                    <small>个</small>
+                                </h2>
+                                <p>昨日新增</p>
+                            </div>
+                            <div class="col-xs-3">
+                                <h2 class="text-green-light">
+                                    <span id="currentMonthAddedBusinessCount"></span>
+                                    <small>个</small>
+                                </h2>
+                                <p>本月新增</p>
+                            </div>
+                            <div class="last col-xs-3">
+                                <h2 class="text-purple-light">
+                                    315
+                                    <small>个</small>
+                                </h2>
+                                <p>商家总数</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <tr>
+                    <th>系统名称</th>
+                    <td>
+                        SHOP++ B2B2C网上商城系统
+                        <a class="text-gray" href="http://www.shopxx.net" target="_blank">[授权查询]</a>
+                    </td>
+                    <th>系统版本</th>
+                    <td>6.0 RELEASE</td>
+                </tr>
+                <tr>
+                    <th>JAVA版本</th>
+                    <td>1.7.0_80</td>
+                    <th>JAVA路径</th>
+                    <td>/shopxx/jdk1.7/jre</td>
+                </tr>
+                <tr>
+                    <th>操作系统构架</th>
+                    <td>amd64</td>
+                    <th>操作系统名称</th>
+                    <td>Linux</td>
+                </tr>
+                <tr>
+                    <th>Server信息</th>
+                    <td>
+                        <span title="Apache Tomcat/7.0.84" data-toggle="tooltip">Apache Tomcat/7.0.84</span>
+                    </td>
+                    <th>Servlet版本</th>
+                    <td>3.0</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</main>
+</body>
+</html>

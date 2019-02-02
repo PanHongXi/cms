@@ -1,0 +1,64 @@
+<header class="top header-v1 desktops-section default-top">   
+<div class="top-main">
+<div class="page-width clearfix">
+<div class="logo" skinobjectzone="HtmlLogo_399"><a href="/"><img src="{$temp_src}/img/472d1f03-0560-4338-846b-b29ac61e993a_0_80.png" alt="中英双语响应式生物科技实验室类织梦模板(自适应)"/></a></div>
+  
+<nav class="nav">
+<div class="main-nav clearfix" skinobjectzone="menu_461">
+<ul class="sf-menu">
+  <li {if condition="$topCid eq ''"}class="current"{/if}>
+    <a class="first-level" href="{:url('index/Index/index')}" target="">
+      <strong>网站首页</strong>
+    </a>
+    <i></i>
+  </li>
+
+{volist name="cateTopRes" id="cateTopRes"}
+  <li {if condition="$cateTopRes['id'] eq $topCid"}class="current"{/if}>
+    <a class="first-level" href="
+    {if condition="$cateTopRes['cate_attr'] eq 1"}{:url('index/Cate/index','cid='.$cateTopRes['id'])}{/if}
+    {if condition="$cateTopRes['cate_attr'] eq 2"}{:url('index/Page/index','cid='.$cateTopRes['id'])}{/if}
+    {if condition="$cateTopRes['cate_attr'] eq 3"}{$cateTopRes['link']}{/if}
+      " target="">
+      <strong>{$cateTopRes['cate_name']}</strong>
+    </a>
+    <i></i>
+    {if condition="$cateTopRes['children']"}
+      <ul class="">
+        {volist name="cateTopRes['children']" id="cateTopRes2"}
+          <li class="">
+              <a class="" href="
+              {if condition="$cateTopRes2['cate_attr'] eq 1"}{:url('index/Cate/index','cid='.$cateTopRes2['id'])}{/if}
+              {if condition="$cateTopRes2['cate_attr'] eq 2"}{:url('index/Page/index','cid='.$cateTopRes2['id'])}{/if}
+              {if condition="$cateTopRes2['cate_attr'] eq 3"}{$cateTopRes2['link']}{/if}
+              " target="">
+                <strong>{$cateTopRes2['cate_name']}</strong>
+              </a>
+             </i>
+          </li>
+        {/volist}
+      </ul>
+    {/if}
+  </li>
+{/volist}
+</ul>
+
+
+</div>
+</nav>
+  
+<div class="language float-right" skinobjectzone="HtmlLanguage_1268">
+<ul class="sf-menu">
+<li><a href="javascript:;" class="first-level"><span><em>中文简体</em></span></a>
+<ul>
+<li><a href="/en/"><span><em>English</em></span></a></li>
+<li><a href="/"><span><em>中文简体</em></span></a></li>
+</ul>
+</li>
+</ul>
+</div>
+ </div>
+</div>
+ 
+<div class="clear"></div>
+</header>

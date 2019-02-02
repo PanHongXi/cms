@@ -1,0 +1,163 @@
+﻿<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>云琰提供最新版TPCMS官方安装程序</title>
+<link href="__INSTALL__/style/install.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="__INSTALL__/style/jquery.js"></script>
+<script type="text/javascript" src="__INSTALL__/style/jquery.validation.min.js"></script>
+<script type="text/javascript" src="__INSTALL__/style/jquery.icheck.min.js"></script>
+<script>
+$(document).ready(function(){
+	$('input[type="checkbox"]').iCheck({
+    checkboxClass: 'icheckbox_flat-green',
+    radioClass: 'iradio_flat-green'
+  });
+});
+
+$(function(){
+	jQuery.validator.addMethod("lettersonly", function(value, element) {
+		return this.optional(element) || /^[^:%,'\*\"\s\<\>\&]+$/i.test(value);
+	}, "不得含有特殊字符");
+	$("#install_form").validate({
+		errorElement: "font",
+    rules : {
+        db_host : {required : true},
+        db_name : {required : true},
+        db_user : {required : true},
+        db_port : {required : true,digits : true},
+       	site_name : {required : true},
+       	admin : {required : true,lettersonly : true},
+       	password : {required : true, minlength : 6},
+       	rpassword : {required : true,equalTo : '#password'},
+		agree : {required : true},
+		store_name : {required : true},
+		member_name : {required : true},
+		seller_name : {required : true},
+		member_password : {required : true},
+		rmember_password : {required : true, equalTo : '#member_password'}
+    }
+	});
+
+	jQuery.extend(jQuery.validator.messages, {
+	  required: "未输入",
+	  digits: "格式错误",
+	  lettersonly: "不得含有特殊字符",
+	  equalTo: "两次密码不一致",
+	  minlength: "密码至少6位"
+	});
+
+	$('#next').click(function(){
+		$('#install_form').submit();
+	});
+
+});
+</script>
+</head>
+<body>
+<div class="header">
+  <div class="layout">
+    <div class="title">
+      <h2>系统安装向导</h2>
+    </div>
+    <div class="version">版本: 目前最新版</div>
+  </div>
+</div>
+<div class="main">
+  <div class="step-box" id="step3">
+    <div class="text-nav">
+      <h1>Step.2</h1>
+      <h2>创建数据库</h2>
+      <h5>填写数据库及站点相关信息</h5>
+    </div>
+    <div class="procedure-nav">
+      <div class="schedule-ico"><span class="a"></span><span class="c"></span><span class="d"></span></div>
+      <div class="schedule-point-now"><span class="a"></span><span class="c"></span><span class="d"></span></div>
+      <div class="schedule-point-bg"><span class="a"></span><span class="c"></span><span class="d"></span></div>
+      <div class="schedule-line-now"><em></em></div>
+      <div class="schedule-line-bg"></div>
+      <div class="schedule-text"><span class="a">检查安装环境</span><span class="c">创建数据库</span><span class="d">安装</span></div>
+    </div>
+  </div>
+  <form action="" id="install_form" method="post">
+    <input type="hidden" value="submit" name="submitform">
+    <input type="hidden" value="" name="install_recover">
+    <div class="form-box control-group">
+      <fieldset>
+        <legend>数据库信息</legend>
+        <div>
+          <label>数据库服务器</label>
+          <span>
+          <input type="text" name="db[hostname]" maxlength="60" value="localhost">
+          </span> <em>数据库服务器地址，一般为localhost</em></div>
+        <div>
+          <div>
+            <label>数据库类型</label>
+            <span>
+          <input type="text" name="db[type]" maxlength="60" value="mysql">
+          </span> <em>数据库类型，一般为mysql</em></div>
+          <div>
+          <label>数据库名</label>
+          <span>
+          <input type="text" name="db[database]" maxlength="50" value="">
+          </span> <em></em></div>
+        <div>
+          <label>数据库用户名</label>
+          <span>
+          <input type="text" name="db[username]" maxlength="30" value="">
+          </span> <em></em></div>
+        <div>
+          <label>数据库密码</label>
+          <span>
+          <input type="password" name="db[password]" maxlength="30" value="">
+          </span> <em></em></div>
+        <div>
+          <label>数据库表前缀</label>
+          <span>
+          <input type="text" name="db[prefix]" maxlength="30" value="tp_">
+          </span> <em>同一数据库运行多个多用户商城程序时，请修改前缀</em></div>
+        <div>
+          <label>数据库端口</label>
+          <span>
+          <input type="text" name="db[hostport]" maxlength="30" value="3306">
+          </span> <em>数据库默认端口一般为3306</em></div>
+                <div>
+          <label>&nbsp;</label>
+         </div>
+      </fieldset>
+      <fieldset>
+        <legend>网站信息</legend>
+        <div>
+          <label>站点名称</label>
+          <span>
+          <input name="admin[site_name]" value="" maxlength="100" type="text">
+          </span> <em>输入站点名称，安装后可在平台设置中进行修改</em></div>
+        <div>
+          <label>管理员帐号</label>
+          <span>
+          <input name="admin[admin]" value="" maxlength="20" type="text">
+          </span> <em></em></div>
+        <div>
+          <label>管理员密码</label>
+          <span>
+          <input name="admin[password]" id="password" maxlength="20" value="" type="password">
+          </span> <em>管理员密码不少于6个字符</em></div>
+        <div>
+          <label>重复密码</label>
+          <span>
+          <input name="admin[rpassword]" value="" maxlength="20" type="password">
+          </span> <em>确保两次输入的密码一致</em></div>
+      </fieldset>
+    </div>
+    <div class="btn-box">
+      <a href="{:url('Index/step1')}" class="btn btn-primary">上一步</a>
+      <a id="next" href="javascript:;" class="btn btn-primary">下一步</a>
+      <!--<button type="submit" style="height: 50px" class="btn btn-primary">下一步</button>-->
+
+    </div>
+  </form>
+</div>
+<div class="footer">
+  <h6><a href="http://www.meaty.top/cms" target="_blank"></a></h6>
+</div></body>
+</html>

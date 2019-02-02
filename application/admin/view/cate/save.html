@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="author" content="云琰 Team">
+    <meta name="copyright" content=云琰">
+    <title>导航添加 - 云琰</title>
+    <link href="/favicon.ico" rel="icon">
+    <link href="__ADMIN__/css/bootstrap.css" rel="stylesheet">
+    <link href="__ADMIN__/css/iconfont.css" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome.css" rel="stylesheet">
+    <link href="__ADMIN__/css/summernote.css" rel="stylesheet">
+    <link href="__ADMIN__/css/bootstrap-select.css" rel="stylesheet">
+    <link href="__ADMIN__/css/ajax-bootstrap-select.css" rel="stylesheet">
+    <link href="__ADMIN__/css/awesome-bootstrap-checkbox.css" rel="stylesheet">
+    <link href="__ADMIN__/css/bootstrap-fileinput.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base.css" rel="stylesheet">
+    <link href="__ADMIN__/css/base_3.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="__ADMIN__/js/html5shiv.js"></script>
+    <script src="__ADMIN__/js/respond.js"></script>
+    <![endif]-->
+    <script src="__ADMIN__/js/jquery.js"></script>
+    <script src="__ADMIN__/js/bootstrap.js"></script>
+    <script src="__ADMIN__/js/bootstrap-growl.js"></script>
+    <script src="__ADMIN__/js/bootstrap-select.js"></script>
+    <script src="__ADMIN__/js/ajax-bootstrap-select.js"></script>
+    <script src="__ADMIN__/js/bootstrap-fileinput.js"></script>
+    <script src="__ADMIN__/js/summernote.js"></script>
+    <script src="__ADMIN__/js/jquery.nicescroll.js"></script>
+    <script src="__ADMIN__/js/jquery.validate.js"></script>
+    <script src="__ADMIN__/js/jquery.validate.additional.js"></script>
+    <script src="__ADMIN__/js/jquery.form.js"></script>
+    <script src="__ADMIN__/js/jquery.cookie.js"></script>
+    <script src="__ADMIN__/js/underscore.js"></script>
+    <script src="__ADMIN__/js/url.js"></script>
+    <script src="__ADMIN__/js/velocity.js"></script>
+    <script src="__ADMIN__/js/velocity.ui.js"></script>
+    <script src="__ADMIN__/js/base.js"></script>
+    <script src="__ADMIN__/js/base_1.js"></script>
+    <script src="__ADMIN__/js/tip.js"></script>
+    <script src="__ADMIN__/plus/uploadify/jquery.uploadify.min.js"></script>
+    <script>
+        $().ready(function() {
+
+            var $settingForm = $("#settingForm");
+            var $watermarkImage = $("#watermarkImage");
+            var $watermarkImageFile = $("#watermarkImageFile");
+            var $distributionCommissionRateModal = $("#distributionCommissionRateModal");
+            var $smtpHost = $("#smtpHost");
+            var $smtpPort = $("#smtpPort");
+            var $smtpUsername = $("#smtpUsername");
+            var $smtpPassword = $("#smtpPassword");
+            var $smtpSSLEnabled = $("#smtpSSLEnabled");
+            var $smtpFromMail = $("#smtpFromMail");
+            var $testSmtp = $("#testSmtp");
+            var $toMail = $("#toMail");
+            var $sendMail = $("#sendMail");
+            var $addDistributionCommissionRate = $("#addDistributionCommissionRate");
+            var $distributionCommissionRate = $("#distributionCommissionRate");
+            var $smsAppId = $("#smsAppId");
+            var $smsBalance = $("#smsBalance");
+            var distributionCommissionRateTableTemplate = _.template($("#distributionCommissionRateTableTemplate").html());
+            var initDistributionCommissionRates = [
+                "50",
+                "30",
+                "20"
+            ];
+
+            // 水印图片
+            $watermarkImageFile.fileinput({
+                allowedFileExtensions: "".split(","),
+                maxFileSize: 10 * 1024,
+                showUpload: false,
+                showClose: false,
+                initialPreview: ["\/upload/image/watermark.png"],
+                initialPreviewAsData: true,
+                initialPreviewShowDelete: false,
+                previewClass: "single-file-preview",
+                layoutTemplates: {
+                    footer: '<div class="file-thumbnail-footer">{actions}</div>',
+                    actions: '<div class="file-actions"><div class="file-footer-buttons">{upload} {download} {delete} {zoom} {other}</div>{drag}<div class="clearfix"></div></div>'
+                },
+                fileActionSettings: {
+                    showUpload: false,
+                    showRemove: false,
+                    showDrag: false
+                },
+                removeFromPreviewOnError: true
+            }).on("filecleared fileerror fileuploaderror", function() {
+                $watermarkImage.val("");
+            });
+
+            // 表单验证
+            $settingForm.validate({
+                rules: {
+                    siteName: "required",
+                    siteUrl: {
+                        required: true,
+                        url2: true
+                    },
+                    logo: "required",
+                    phone: "phone",
+                    zipCode: "zipCode",
+                    email: "email",
+                    largeProductImageWidth: {
+                        required: true,
+                        integer: true,
+                        min: 1
+                    },
+                    largeProductImageHeight: {
+                        required: true,
+                        integer: true,
+                        min: 1
+                    },
+                    mediumProductImageWidth: {
+                        required: true,
+                        integer: true,
+                        min: 1
+                    },
+                    mediumProductImageHeight: {
+                        required: true,
+                        integer: true,
+                        min: 1
+                    },
+                    thumbnailProductImageWidth: {
+                        required: true,
+                        integer: true,
+                        min: 1
+                    },
+                    thumbnailProductImageHeight: {
+                        required: true,
+                        integer: true,
+                        min: 1
+                    },
+                    defaultLargeProductImage: "required",
+                    defaultMediumProductImage: "required",
+                    defaultThumbnailProductImage: "required",
+                    defaultStoreLogo: "required",
+                    watermarkAlpha: {
+                        required: true,
+                        digits: true,
+                        max: 100
+                    },
+                    watermarkImageFile: {
+                        extension: ""
+                    },
+                    defaultMarketPriceScale: {
+                        required: true,
+                        number: true,
+                        min: 0,
+                        decimal: {
+                            integer: 3,
+                            fraction: 2
+                        }
+                    },
+                    registerPoint: {
+                        required: true,
+                        digits: true
+                    },
+                    maxFailedLoginAttempts: {
+                        integer: true,
+                        min: 1
+                    },
+                    passwordLockTime: {
+                        required: true,
+                        digits: true
+                    },
+                    safeKeyExpiryTime: {
+                        required: true,
+                        digits: true
+                    },
+                    uploadMaxSize: {
+                        required: true,
+                        digits: true
+                    },
+                    imageUploadPath: "required",
+                    mediaUploadPath: "required",
+                    fileUploadPath: "required",
+                    smtpFromMail: {
+                        required: true,
+                        email: true
+                    },
+                    smtpHost: "required",
+                    smtpPort: {
+                        required: true,
+                        digits: true
+                    },
+                    smtpUsername: "required",
+                    toMail: {
+                        required: true,
+                        email: true
+                    },
+                    currencySign: "required",
+                    currencyUnit: "required",
+                    stockAlertCount: {
+                        required: true,
+                        digits: true
+                    },
+                    automaticReceiveTime: {
+                        required: true,
+                        digits: true
+                    },
+                    defaultPointScale: {
+                        required: true,
+                        number: true,
+                        min: 0,
+                        decimal: {
+                            integer: 3,
+                            fraction: 2
+                        }
+                    },
+                    maxPointScale: {
+                        required: true,
+                        number: true,
+                        min: 0,
+                        decimal: {
+                            integer: 3,
+                            fraction: 2
+                        },
+                        comparePointScale: "#defaultPointScale"
+                    },
+                    memberMinimumCashAmount: {
+                        required: true,
+                        positive: true,
+                        decimal: {
+                            integer: 12,
+                            fraction: 2
+                        }
+                    },
+                    businessMinimumCashAmount: {
+                        required: true,
+                        positive: true,
+                        decimal: {
+                            integer: 12,
+                            fraction: 2
+                        }
+                    },
+                    taxRate: {
+                        required: true,
+                        number: true,
+                        min: 0,
+                        decimal: {
+                            integer: 3,
+                            fraction: 2
+                        }
+                    },
+                    cookiePath: "required",
+                    smsSecretKey: {
+                        required: function(element) {
+                            return $.trim($smsAppId.val()) != "";
+                        }
+                    }
+                },
+                submitHandler: function(form) {
+                    $(form).ajaxSubmit({
+                        successRedirectUrl: "{:url('admin/Cate/save')}"
+                    });
+                }
+            });
+
+        });
+    </script>
+</head>
+<body class="admin">
+{include file="common/header"}
+<script>
+    $().ready(function() {
+
+        var $document = $(document);
+        var $mainHeaderLogout = $("#mainHeaderLogout");
+
+        // 用户注销
+        $mainHeaderLogout.click(function() {
+            $document.trigger("loggedOut.shopxx.user", $.getCurrentUser());
+        });
+
+    });
+</script>
+<script>
+    $().ready(function() {
+
+        var $window = $(window);
+        var $body = $("body");
+        var $mainSidebarCollapseToggle = $("[data-toggle='mainSidebarCollapse']");
+        var $mainSidebar = $("#mainSidebar");
+        var $searchForm = $("#mainSidebar .search form");
+        var $searchValue = $("#mainSidebar .search input[name='searchValue']");
+        var $panelCollapse = $("#mainSidebar .panel-collapse");
+
+        // 主侧边栏折叠
+        $mainSidebarCollapseToggle.click(function() {
+            var niceScroll = $mainSidebar.getNiceScroll();
+            var interval = setInterval(function() {
+                niceScroll.resize();
+            }, 10);
+
+            if ($window.width() > 767) {
+                $body.removeClass("main-sidebar-expanded").toggleClass("main-sidebar-mini");
+            } else {
+                $body.removeClass("main-sidebar-mini").toggleClass("main-sidebar-expanded");
+            }
+
+            $body.one("bsTransitionEnd", function() {
+                niceScroll.resize();
+                window.clearInterval(interval);
+            }).emulateTransitionEnd(500);
+        });
+
+        // 主侧边栏滚动条
+        $mainSidebar.niceScroll({
+            cursorwidth: "4px",
+            cursorcolor: "#ffffff",
+            cursorborder: "0px",
+            cursoropacitymax: 0.4
+        });
+
+        // 搜索
+        $searchForm.submit(function() {
+            if ($.trim($searchValue.val()) == "") {
+                return false;
+            }
+        });
+
+        // 面板折叠
+        $panelCollapse.on("shown.bs.collapse hidden.bs.collapse", function() {
+            $mainSidebar.getNiceScroll().resize();
+        });
+
+    });
+</script>
+{include file="common/left"}
+<main>
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <li>
+                <a href="/admin/index">
+                    <i class="iconfont icon-homefill"></i>
+                    首页
+                </a>
+            </li>
+            <li class="active">导航添加</li>
+        </ol>
+        <form id="form" class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#base" data-toggle="tab">基本设置</a>
+                        </li>
+                        <li>
+                            <a href="#show" data-toggle="tab">SEO信息</a>
+                        </li>
+                        <li>
+                            <a href="#other" data-toggle="tab">导航内容</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="base" class="tab-pane active">
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label">所属模型:</label>
+                                <div class="col-xs-9 col-sm-4">
+                                    <select name="model_id" class=" form-control" data-size="10">
+                                        {volist name="modelList" id="modelList"}
+                                            <option value="{$modelList['id']}">{$modelList['model_name']}</option>
+                                        {/volist}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label">上级导航:</label>
+                                <div class="col-xs-9 col-sm-4">
+                                    <select name="pid" class="selectpicker form-control" data-size="10">
+                                        <option value="0">顶级导航</option>
+                                        {volist name="list" id="list"}
+                                            <option value="{$list['id']}" {if condition="$list['id'] eq $cateId"}selected="selected"{/if}><?php echo str_repeat('&nbsp;', $list['level']*2);?>{$list['cate_name']}</option>
+                                        {/volist}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label item-required" >导航名称:</label>
+                                <div class="col-xs-9 col-sm-4" title="导航名称" data-toggle="tooltip">
+                                    <input name="cate_name" class="form-control" type="text"  maxlength="19">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label item-required" >导航标题:</label>
+                                <div class="col-xs-9 col-sm-4" title="导航标题" data-toggle="tooltip">
+                                    <input id="" name="title" class="form-control" type="text" maxlength="19">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label">隐藏导航:</label>
+                                <div class="col-xs-9 col-sm-4">
+                                    <div class="checkbox">
+                                        <input id="isEnabled" name="enabled" type="checkbox" value="1" checked="checked"/>
+                                        <label for="isEnabled">是否隐藏</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label">是否底部显示:</label>
+                                <div class="col-xs-9 col-sm-4">
+                                    <div class="checkbox">
+                                        <input id="isEnabled" name="foot_nav" type="checkbox" value="1"/>
+                                        <label for="isEnabled">是否底部显示</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label item-required">导航图片:</label>
+                                <div class="inputFileWrapper">
+                                    <label for="inputFile">
+                                        <input type="file" name="img" id="inputFile"/>
+                                        <span class="custorm-style" style="cursor:pointer;">
+                                            <span class="left-button">上传图片</span>
+                                            <span class="right-text" id="rightText"></span>
+                                        </span>
+                                        <span><img style="width: 50px;height: 40px" src="__T__/t.png"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label" for="hotSearch">导航属性:</label>
+                                <div class="col-xs-9 col-sm-4">
+                                    <label class="demo--label">
+                                        <input class="demo--radio" style="cursor:pointer;" value="1" type="radio" checked="checked" name="cate_attr">
+                                        <span class="demo--radioInput"></span>列表页导航
+                                    </label>
+                                    <label class="demo--label">
+                                        <input class="demo--radio" style="cursor:pointer;" value="2" type="radio" name="cate_attr">
+                                        <span class="demo--radioInput"></span>封面页导航
+                                    </label>
+                                    <label class="demo--label">
+                                        <input class="demo--radio" style="cursor:pointer;" value="3" type="radio" name="cate_attr">
+                                        <span class="demo--radioInput"></span>导航外链
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label item-required" >列表页模板:</label>
+                                <div class="col-xs-9 col-sm-4" title="列表页模板" data-toggle="tooltip">
+                                    <input name="list_tmp" class="form-control" type="text" value="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label item-required" >封面页模板:</label>
+                                <div class="col-xs-9 col-sm-4" title="封面页模板" data-toggle="tooltip">
+                                    <input name="index_tmp" class="form-control" type="text" value="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label item-required" >内容页模板:</label>
+                                <div class="col-xs-9 col-sm-4" title="内容页模板" data-toggle="tooltip">
+                                    <input name="article_tmp" class="form-control" type="text" value="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label item-required" >导航外链:</label>
+                                <div class="col-xs-9 col-sm-4" title="外链地址请以：http:// 开始..." data-toggle="tooltip">
+                                    <input name="link" class="form-control" type="text" value="" maxlength="">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="show" class="tab-pane">
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label item-required" >关键字:</label>
+                                <div class="col-xs-9 col-sm-4" title="关键字" data-toggle="tooltip">
+                                    <input name="keywords" class="form-control" type="text" value="" maxlength="9">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label item-required" >排序:</label>
+                                <div class="col-xs-9 col-sm-4" title="排序" data-toggle="tooltip">
+                                    <input name="sort" class="form-control" type="text" value="50" maxlength="9">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-xs-3 col-sm-2 control-label item-required" >描述:</label>
+                                <div class="col-xs-9 col-sm-4" title="描述" data-toggle="tooltip">
+                                    <textarea class="form-control" style="height: 150px" name="desc"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="other" class="tab-pane">
+                            <div class="form-group" style="margin-right: 20%">
+                                <label class="col-xs-3 col-sm-2 control-label">介绍:</label>
+                                <div class="col-xs-9 col-sm-10">
+                                    <textarea name="content" class="form-control" data-provide="editor"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-xs-9 col-sm-10 col-xs-offset-3 col-sm-offset-2">
+                            <!--<button class="btn btn-primary" type="submit" onclick="ajaxPost()">确 定</button>-->
+                            <span class="btn btn-primary" id="tijiao" onclick="ajaxPost();" >确 定</span>
+                            <button class="btn btn-default" type="button" data-action="back">返 回</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>
+<script>
+    //上传文件设置
+    var fileBtn = $("input[type=file]");
+    fileBtn.on("change", function(){
+        var index = $(this).val().lastIndexOf("\\");
+
+        var sFileName = $(this).val().substr((index+1));
+
+        $("#rightText").html(sFileName);
+    });
+
+    //改变栏目内容
+    function changeTmp() {
+        var pCateId = $("select[name=pid]").find("option:selected").val();
+        if (pCateId != 0) {
+            $.ajax({
+                url:"{:url('admin/Cate/ajaxCate')}",
+                type:"POST",
+                dataType:"JSON",
+                data:{cateId:pCateId},
+                success:function(data){
+                   console.log(data);
+                    $("input[name=list_tmp]").val(data.list_tmp);
+                    $("input[name=index_tmp]").val(data.index_tmp);
+                    $("input[name=article_tmp]").val(data.article_tmp);
+                    $("select[name=model_id]").val(data.model_id);
+                    // $("select[name=model_id]").find("option:selected").text(data.model_name);
+                },
+            });
+        }
+    }
+
+    if ($("select[name=pid]").find("option:selected").val() != 0) {
+        changeTmp();
+    }
+
+    $("select[name=pid]").change(function () {
+        changeTmp();
+    });
+
+
+</script>
+<script>
+    function ajaxPost(){
+        var form = new FormData(document.getElementById("form"));
+        $.ajax({
+            url:"{:url('admin/Cate/save')}",
+            type:"POST",
+            data:form,
+            processData:false,
+            contentType:false,
+            success:function(data){
+                var t = JSON.parse(data);
+
+                if (t.status == 1) {
+                    console.log(t.url);
+                    tip(t.msg, t.status, t.url);
+                } else {
+                    console.log(t.status);
+                    tip(t.msg, t.status, '');
+                }
+            },
+            error:function () {
+                tip(data.msg, 2);
+            }
+        });
+    }
+</script>

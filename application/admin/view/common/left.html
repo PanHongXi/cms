@@ -1,0 +1,266 @@
+<aside id="mainSidebar" class="main-sidebar">
+    <div class="search">
+        <form action="/admin/product/list" method="get">
+            <input name="searchProperty" type="hidden" value="name">
+            <div class="input-group">
+                <input name="searchValue" class="form-control" type="text" placeholder="商品搜索" x-webkit-speech="x-webkit-speech" x-webkit-grammar="builtin:search">
+                <div class="input-group-btn">
+                    <button class="btn btn-default" type="submit">
+                        <i class="iconfont icon-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="mainSidebarPanelGroup" class="panel-group">
+        <!--<div class="panel panel-default">-->
+            <!--<div class="panel-heading">-->
+                <!--<h4 class="panel-title">-->
+                    <!--<a href="#memberGroupPanelCollapse" data-toggle="collapse" data-parent="#mainSidebarPanelGroup">-->
+                        <!--<i class="iconfont icon-people"></i>-->
+                        <!--<span>会员管理</span>-->
+                        <!--<i class="iconfont icon-unfold"></i>-->
+                    <!--</a>-->
+                <!--</h4>-->
+            <!--</div>-->
+            <!--<div id="memberGroupPanelCollapse" class="panel-collapse collapse <?php if($con == 'Admin'){echo 'in';} ?>">-->
+                <!--<div class="panel-body">-->
+                    <!--<ul class="list-group">-->
+                        <!--<li class="list-group-item">-->
+                            <!--<a href="{:url('Admin/lst')}">-->
+                                <!--<i class="iconfont icon-weixuanzhong"></i>-->
+                                <!--会员列表-->
+                            <!--</a>-->
+                        <!--</li>-->
+                        <!--<li class="list-group-item">-->
+                            <!--<a href="/admin/review/list">-->
+                                <!--<i class="iconfont icon-weixuanzhong"></i>-->
+                                <!--评论管理-->
+                            <!--</a>-->
+                        <!--</li>-->
+                        <!--<li class="list-group-item">-->
+                            <!--<a href="/admin/consultation/list">-->
+                                <!--<i class="iconfont icon-weixuanzhong"></i>-->
+                                <!--咨询管理-->
+                            <!--</a>-->
+                        <!--</li>-->
+                        <!--<li class="list-group-item">-->
+                            <!--<a href="/admin/message_config/list">-->
+                                <!--<i class="iconfont icon-weixuanzhong"></i>-->
+                                <!--消息配置-->
+                            <!--</a>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="panel panel-default">-->
+            <!--<div class="panel-heading">-->
+                <!--<h4 class="panel-title">-->
+                    <!--<a href="#memberGroupPanelCollapseau" data-toggle="collapse" data-parent="#mainSidebarPanelGroup">-->
+                        <!--<i class="iconfont icon-friendadd text-orange-light"></i>-->
+                        <!--<span>权限管理</span>-->
+                        <!--<i class="iconfont icon-unfold"></i>-->
+                    <!--</a>-->
+                <!--</h4>-->
+            <!--</div>-->
+            <!--<div id="memberGroupPanelCollapseau" class="panel-collapse collapse <?php if($con == 'AuthRule' or $con == 'AuthGroup'){echo 'in';} ?>">-->
+                <!--<div class="panel-body">-->
+                    <!--<ul class="list-group">-->
+                        <!--<li class="list-group-item">-->
+                            <!--<a href="{:url('AuthRule/lst')}">-->
+                                <!--<i class="iconfont icon-weixuanzhong"></i>-->
+                                <!--权限列表-->
+                            <!--</a>-->
+                        <!--</li>-->
+                        <!--<li class="list-group-item">-->
+                            <!--<a href="{:url('AuthGroup/lst')}">-->
+                                <!--<i class="iconfont icon-weixuanzhong"></i>-->
+                                <!--用户组列表-->
+                            <!--</a>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="panel panel-default">-->
+            <!--<div class="panel-heading">-->
+                <!--<h4 class="panel-title">-->
+                    <!--<a href="#contentGroupPanelCollapse" data-toggle="collapse" data-parent="#mainSidebarPanelGroup">-->
+                        <!--<i class="iconfont icon-text"></i>-->
+                        <!--<span>导航管理</span>-->
+                        <!--<i class="iconfont icon-unfold"></i>-->
+                    <!--</a>-->
+                <!--</h4>-->
+            <!--</div>-->
+            <!--<div id="contentGroupPanelCollapse" class="panel-collapse collapse <?php if($con == 'Cate'){echo 'in';} ?>">-->
+                <!--<div class="panel-body">-->
+                    <!--<ul class="list-group">-->
+                        <!--<li class="list-group-item">-->
+                            <!--<a href="{:url('Cate/lst')}">-->
+                                <!--<i class="iconfont icon-weixuanzhong"></i>-->
+                                <!--导航管理-->
+                            <!--</a>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="panel panel-default">-->
+            <!--<div class="panel-heading">-->
+                <!--<h4 class="panel-title">-->
+                    <!--<a href="#productGroupPanelCollapse" data-toggle="collapse" data-parent="#mainSidebarPanelGroup">-->
+                        <!--<i class="iconfont icon-goods"></i>-->
+                        <!--<span>模型管理</span>-->
+                        <!--<i class="iconfont icon-unfold"></i>-->
+                    <!--</a>-->
+                <!--</h4>-->
+            <!--</div>-->
+            <!--<div id="productGroupPanelCollapse" class="panel-collapse collapse <?php if($con == 'Model'){echo 'in';} ?>">-->
+                <!--<div class="panel-body">-->
+                    <!--<ul class="list-group">-->
+                        <!--<li class="list-group-item">-->
+                            <!--<a href="{:url('Model/lst')}">-->
+                                <!--<i class="iconfont icon-weixuanzhong"></i>-->
+                                <!--模型列表-->
+                            <!--</a>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="panel panel-default">-->
+            <!--<div class="panel-heading">-->
+                <!--<h4 class="panel-title">-->
+                    <!--<a href="#sstoreGroupPanelCollapse" data-toggle="collapse" data-parent="#mainSidebarPanelGroup" class="collapsed" aria-expanded="false">-->
+                        <!--<i class="iconfont icon-shop"></i>-->
+                        <!--<span>字段管理</span>-->
+                        <!--<i class="iconfont icon-unfold"></i>-->
+                    <!--</a>-->
+                <!--</h4>-->
+            <!--</div>-->
+            <!--<div id="sstoreGroupPanelCollapse" class="panel-collapse collapse <?php if($con == 'ModelField'){echo 'in';} ?>" aria-expanded="false">-->
+                <!--<div class="panel-body">-->
+                    <!--<ul class="list-group">-->
+                        <!--<li class="list-group-item">-->
+                            <!--<a href="{:url('ModelField/lst')}">-->
+                                <!--<i class="iconfont icon-weixuanzhong"></i>-->
+                                <!--字段列表-->
+                            <!--</a>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="panel panel-default">-->
+            <!--<div class="panel-heading">-->
+                <!--<h4 class="panel-title">-->
+                    <!--<a href="#storeGroupPanelCollapse" data-toggle="collapse" data-parent="#mainSidebarPanelGroup" class="collapsed" aria-expanded="false">-->
+                        <!--<i class="iconfont icon-shop"></i>-->
+                        <!--<span>文章管理</span>-->
+                        <!--<i class="iconfont icon-unfold"></i>-->
+                    <!--</a>-->
+                <!--</h4>-->
+            <!--</div>-->
+            <!--<div id="storeGroupPanelCollapse" class="panel-collapse collapse <?php if($con == 'Article'){echo 'in';} ?>" aria-expanded="false">-->
+                <!--<div class="panel-body">-->
+                    <!--<ul class="list-group">-->
+                        <!--<li class="list-group-item">-->
+                            <!--<a href="{:url('Article/lst')}">-->
+                                <!--<i class="iconfont icon-weixuanzhong"></i>-->
+                                <!--文章列表-->
+                            <!--</a>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="panel panel-default">-->
+            <!--<div class="panel-heading">-->
+                <!--<h4 class="panel-title">-->
+                    <!--<a href="#systemGroupPanelCollapse" data-toggle="collapse" data-parent="#mainSidebarPanelGroup">-->
+                        <!--<i class="iconfont icon-settings"></i>-->
+                        <!--<span>系统设置</span>-->
+                        <!--<i class="iconfont icon-unfold"></i>-->
+                    <!--</a>-->
+                <!--</h4>-->
+            <!--</div>-->
+            <!--<div id="systemGroupPanelCollapse" class="panel-collapse collapse <?php if($con == 'Conf'){echo 'in';} ?>">-->
+                <!--<div class="panel-body">-->
+                    <!--<ul class="list-group">-->
+                        <!--<li class="list-group-item">-->
+                            <!--<a href="{:url('Conf/confList')}">-->
+                                <!--<i class="iconfont icon-weixuanzhong"></i>-->
+                                <!--配置列表-->
+                            <!--</a>-->
+                        <!--</li>-->
+                        <!--<li class="list-group-item">-->
+                            <!--<a href="{:url('Conf/cList')}">-->
+                                <!--<i class="iconfont icon-weixuanzhong"></i>-->
+                                <!--配置管理-->
+                            <!--</a>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="panel panel-default">-->
+            <!--<div class="panel-heading">-->
+                <!--<h4 class="panel-title">-->
+                    <!--<a href="#marketingGroupPanelCollapse" data-toggle="collapse" data-parent="#mainSidebarPanelGroup" aria-expanded="false" class="collapsed">-->
+                        <!--<i class="iconfont icon-shop"></i>-->
+                        <!--<span>采集管理</span>-->
+                        <!--<i class="iconfont icon-unfold"></i>-->
+                    <!--</a>-->
+                <!--</h4>-->
+            <!--</div>-->
+            <!--<div id="marketingGroupPanelCollapse" class="panel-collapse collapse <?php if($con == 'Note'){echo 'in';} ?>" aria-expanded="false" style="height: 0px;">-->
+                <!--<div class="panel-body">-->
+                    <!--<ul class="list-group">-->
+                        <!--<li class="list-group-item">-->
+                            <!--<a href="{:url('Note/lst')}">-->
+                                <!--<i class="iconfont icon-weixuanzhong"></i>-->
+                                <!--采集列表-->
+                            <!--</a>-->
+                        <!--</li>-->
+                        <!--<li class="list-group-item">-->
+                            <!--<a href="{:url('Note/addlr')}">-->
+                                <!--<i class="iconfont icon-weixuanzhong"></i>-->
+                                <!--添加采集-->
+                            <!--</a>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+
+
+        {foreach name="menuRes" item="menu" key="k"}
+            <div class="panel panel-default" <?php $arr = explode('/', $menu['name']); $pcon = $arr[1];?>>
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="#marketingGroupPanelCollapses<?php echo $arr[1];?>" data-toggle="collapse" data-parent="#mainSidebarPanelGroup" aria-expanded="<?php if($con == $pcon){echo 'true';}?>" class="collapsed">
+                            <i class="iconfont {$menu['icon']}"></i>
+                            <span>{$menu['title']}</span>
+                            <i class="iconfont icon-unfold"></i>
+                        </a>
+                    </h4>
+                </div>
+                <div id="marketingGroupPanelCollapses<?php echo $arr[1];?>" class="panel-collapse collapse <?php if($con == $pcon){echo 'in';}?>" aria-expanded="false" style="height: 0px;">
+                    <div class="panel-body">
+                        <ul class="list-group">
+                            {foreach name="menu['children']" item="menu2"}
+                                <li class="list-group-item <?php if($name == $menu2['name']){echo 'active';}?>">
+                                    <a href="{:url($menu2['name'])}">
+                                        <i class="iconfont icon-weixuanzhong"></i>
+                                        {$menu2['title']}
+                                    </a>
+                                </li>
+                            {/foreach}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        {/foreach}
+    </div>
+</aside>
